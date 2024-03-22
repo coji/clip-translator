@@ -10,16 +10,24 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@conform-to/react": "^1.0.5",
+    "@conform-to/zod": "^1.0.5",
+    "@radix-ui/react-avatar": "^1.0.4",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
     "@remix-run/node": "^2.8.1",
     "@remix-run/react": "^2.8.1",
-    "@tauri-apps/api": "^1",
+    "@tauri-apps/api": "^1.5.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.361.0",
     "react": "18.3.0-canary-a4939017f-20240320",
     "react-dom": "18.3.0-canary-a4939017f-20240320",
+    "react-twc": "^1.4.1",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.22.4",
+    "zodix": "^0.4.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.6.2",
