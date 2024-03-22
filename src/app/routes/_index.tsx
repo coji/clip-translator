@@ -1,8 +1,12 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
-import { Link } from '@remix-run/react'
+import {
+  Form,
+  Link,
+  useActionData,
+  type ClientActionFunctionArgs,
+} from '@remix-run/react'
 import { invoke } from '@tauri-apps/api/tauri'
-import { useState } from 'react'
 import { z } from 'zod'
 import { Button, Input, Label, Stack } from '~/components/ui'
 
@@ -10,28 +14,24 @@ const schema = z.object({
   name: z.string(),
 })
 
+export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
+  const submission = parseWithZod(await request.formData(), { schema })
+  if (submission.status !== 'success') {
+    return
+  }
+  const greetMessage = await greet(submission.value.name)
+  return { greetMessage }
+}
+
 const greet = async (name: string): Promise<string> => {
   return await invoke('greet', { name })
 }
 
-const executeCommand = async () => {
-  return await invoke('simple_command')
-}
-
 export default function IndexPage() {
-  const [greetMsg, setGreetMsg] = useState('')
   const [form, { name }] = useForm({
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
-    onSubmit: async (event, { formData }) => {
-      event.preventDefault()
-      const submission = parseWithZod(formData, { schema })
-      if (submission.status !== 'success') {
-        return
-      }
-      const greetMessage = await greet(submission.value.name)
-      setGreetMsg(greetMessage)
-    },
   })
+  const actionData = useActionData<typeof clientAction>()
 
   return (
     <div>
@@ -42,7 +42,7 @@ export default function IndexPage() {
       </Link>
 
       <Stack asChild>
-        <form {...getFormProps(form)}>
+        <Form method="POST" {...getFormProps(form)}>
           <div>
             <Label htmlFor={name.id}>Name</Label>
             <Input
@@ -56,8 +56,8 @@ export default function IndexPage() {
 
           <Button type="submit">Greet</Button>
 
-          <p>{greetMsg}</p>
-        </form>
+          <p>{actionData?.greetMessage}</p>
+        </Form>
       </Stack>
     </div>
   )
