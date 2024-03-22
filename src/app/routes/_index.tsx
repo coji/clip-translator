@@ -6,8 +6,8 @@ import {
   useActionData,
   type ClientActionFunctionArgs,
 } from '@remix-run/react'
-import { invoke } from '@tauri-apps/api/tauri'
 import { z } from 'zod'
+import { greet } from '~/commands'
 import { Button, Input, Label, Stack } from '~/components/ui'
 
 const schema = z.object({
@@ -21,10 +21,6 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   }
   const greetMessage = await greet(submission.value.name)
   return { greetMessage }
-}
-
-const greet = async (name: string): Promise<string> => {
-  return await invoke('greet', { name })
 }
 
 export default function IndexPage() {
