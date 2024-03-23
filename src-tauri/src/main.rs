@@ -10,6 +10,7 @@ use std::io::{Read, Write};
 #[derive(Debug, Serialize, Deserialize)]
 struct AppConfig {
     anthropic_api_key: String,
+    system_prompt: String,
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command

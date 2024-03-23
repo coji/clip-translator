@@ -1,60 +1,90 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import {
   Form,
   Link,
+  redirect,
   useActionData,
+  useLoaderData,
   type ClientActionFunctionArgs,
+  type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
+import { useEffect } from 'react'
 import { z } from 'zod'
+import { zx } from 'zodix'
 import { loadAppConfig } from '~/commands'
-import { Button, Input, Label, Stack } from '~/components/ui'
+import { Button, HStack, Stack, Textarea } from '~/components/ui'
+import { useClaude3 } from '~/services/claude3'
 
 const schema = z.object({
-  name: z.string(),
+  source: z.string(),
 })
+
+export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+  const { source } = zx.parseQuery(request, { source: z.string().optional() })
+  const config = await loadAppConfig()
+  if (!config) {
+    return redirect('/config')
+  }
+  return { source, config }
+}
 
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const submission = parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
-    return
+    return submission.reply()
   }
-  const greetMessage = await loadAppConfig()
-  return { greetMessage }
+  return null
 }
 
 export default function IndexPage() {
-  const [form, { name }] = useForm({
+  const { source, config } = useLoaderData<typeof clientLoader>()
+  const lastResult = useActionData<typeof clientAction>()
+  const [form, fields] = useForm({
+    lastResult: lastResult,
+    defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
   })
-  const actionData = useActionData<typeof clientAction>()
+  const { getAnswer, result } = useClaude3({
+    apiKey: config.anthropic_api_key,
+    systemPrompt: config.system_prompt,
+  })
+
+  console.log({ source, config })
+  useEffect(() => {
+    if (source) {
+      console.log('getAnswer', source)
+      getAnswer(source)
+    }
+  }, [source, getAnswer])
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold">Hello Remix SPA mode on Tauri!</h1>
-      <img src="/tauri.svg" alt="tauri" />
-      <Link to="/config" className="text-blue-500 underline">
-        Config Page
-      </Link>
+    <Stack>
+      <HStack className="flex-1">
+        <Form
+          className="flex flex-1 flex-col gap-4"
+          method="GET"
+          {...getFormProps(form)}
+        >
+          <Textarea
+            className="flex-1"
+            placeholder="Enter a source text..."
+            {...getTextareaProps(fields.source)}
+          />
 
-      <Stack asChild>
-        <Form method="POST" {...getFormProps(form)}>
-          <div>
-            <Label htmlFor={name.id}>Name</Label>
-            <Input
-              placeholder="Enter a name..."
-              {...getInputProps(name, { type: 'text' })}
-            />
-            <div id={name.errorId} className="text-destructive">
-              {name.errors}
-            </div>
-          </div>
-
-          <Button type="submit">Greet</Button>
-
-          <p>{JSON.stringify(actionData?.greetMessage)}</p>
+          <Button type="submit" className="w-full">
+            Translate
+          </Button>
         </Form>
-      </Stack>
-    </div>
+
+        <Textarea readOnly className="flex-1">
+          {result}
+        </Textarea>
+      </HStack>
+
+      <Link to="/config" className="text-blue-500 underline">
+        Config
+      </Link>
+    </Stack>
   )
 }
