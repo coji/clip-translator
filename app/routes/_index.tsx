@@ -82,7 +82,7 @@ export default function IndexPage() {
         </Textarea>
       </HStack>
 
-      <Link to="/config" className="text-blue-500 underline">
+      <Link to="/config" className="text-xs text-primary underline">
         Config
       </Link>
     </Stack>
