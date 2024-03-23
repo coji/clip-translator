@@ -47,6 +47,8 @@ export default function App() {
 
 export function HydrateFallback() {
   return (
-    <p className="grid h-screen grid-cols-1 place-items-center">Loading...</p>
+    <p className="grid h-screen grid-cols-1 place-items-center text-foreground/50">
+      Loading...
+    </p>
   )
 }

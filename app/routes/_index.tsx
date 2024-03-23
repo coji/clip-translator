@@ -9,12 +9,11 @@ import {
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
-import { useEffect } from 'react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { loadAppConfig } from '~/commands'
 import { Button, HStack, Stack, Textarea } from '~/components/ui'
-import { useClaude3 } from '~/services/claude3'
+import { useOpenAI } from '~/services/openai'
 
 const schema = z.object({
   source: z.string(),
@@ -22,6 +21,7 @@ const schema = z.object({
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
+  console.log('clientLoader', { source })
   const config = await loadAppConfig()
   if (!config) {
     return redirect('/config')
@@ -44,19 +44,18 @@ export default function IndexPage() {
     lastResult: lastResult,
     defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
-  })
-  const { getAnswer, result } = useClaude3({
-    apiKey: config.anthropic_api_key,
-    systemPrompt: config.system_prompt,
+    onSubmit: (event, { submission }) => {
+      if (submission?.status === 'success') {
+        getAnswer(submission.value.source)
+      }
+    },
   })
 
-  console.log({ source, config })
-  useEffect(() => {
-    if (source) {
-      console.log('getAnswer', source)
-      getAnswer(source)
-    }
-  }, [source, getAnswer])
+  const { getAnswer, result } = useOpenAI({
+    apiKey: config.openai_api_key,
+    organization: config.openai_organization,
+    systemPrompt: config.system_prompt,
+  })
 
   return (
     <Stack>
@@ -77,9 +76,7 @@ export default function IndexPage() {
           </Button>
         </Form>
 
-        <Textarea readOnly className="flex-1">
-          {result}
-        </Textarea>
+        <Textarea readOnly className="flex-1" value={result ?? ''} />
       </HStack>
 
       <Link to="/config" className="text-xs text-primary underline">

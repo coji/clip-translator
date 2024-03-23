@@ -1,23 +1,29 @@
-import { Anthropic } from '@anthropic-ai/sdk'
+import { OpenAI } from 'openai'
 import { useCallback, useState } from 'react'
 
-export const useClaude3 = ({
+export const useOpenAI = ({
   apiKey,
+  organization,
   systemPrompt,
 }: {
   apiKey: string
+  organization?: string
   systemPrompt: string
 }) => {
   const [result, setResult] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const anthropic = new Anthropic({ apiKey })
+  const openai = new OpenAI({
+    apiKey,
+    organization,
+    dangerouslyAllowBrowser: true,
+  })
 
   const getAnswer = useCallback(
     async (question: string) => {
       setResult('')
       setIsLoading(true)
-      const response = await anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
+      const response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
         max_tokens: 1000,
         messages: [
           { role: 'user', content: systemPrompt },
@@ -27,13 +33,14 @@ export const useClaude3 = ({
       })
 
       for await (const message of response) {
-        if (message.type === 'content_block_delta') {
-          setResult((prev) => `${prev}${message.delta.text}`)
+        const delta = message.choices[0].delta.content
+        if (delta) {
+          setResult((prev) => `${prev}${delta}`)
         }
       }
       setIsLoading(false)
     },
-    [anthropic, systemPrompt],
+    [openai, systemPrompt],
   )
 
   return { getAnswer, result, isLoading }

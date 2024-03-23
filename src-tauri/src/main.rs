@@ -10,6 +10,8 @@ use std::io::{Read, Write};
 #[derive(Debug, Serialize, Deserialize)]
 struct AppConfig {
     anthropic_api_key: String,
+    openai_api_key: String,
+    openai_organization: String,
     system_prompt: String,
 }
 
