@@ -1,7 +1,4 @@
-# Tauri + React + Typescript
+# Translator using LLM like DeepL.
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+![CleanShot 2024-03-23 at 22 02 03@2x](https://github.com/coji/clip-translator/assets/9904/c6109ed5-8d90-4eda-9b48-58e9d8db73ee)
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
