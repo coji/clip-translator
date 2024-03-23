@@ -20,7 +20,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Meta />
         <Links />
       </head>
-      <body className="m-4">
+      <body className="grid min-h-screen grid-cols-1 p-4">
         {children}
         <ScrollRestoration />
         <Scripts />
