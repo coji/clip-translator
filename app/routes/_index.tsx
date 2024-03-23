@@ -44,7 +44,7 @@ export default function IndexPage() {
     lastResult: lastResult,
     defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
-    onSubmit: (event, { submission }) => {
+    onSubmit: (_, { submission }) => {
       if (submission?.status === 'success') {
         getAnswer(submission.value.source)
       }
