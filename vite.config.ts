@@ -4,14 +4,7 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [
-    remix({
-      appDirectory: './src/app',
-      ignoredRouteFiles: ['**/.*'],
-      ssr: false,
-    }),
-    tsConfigPaths(),
-  ],
+  plugins: [remix({ ssr: false }), tsConfigPaths()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
