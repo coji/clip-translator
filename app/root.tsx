@@ -4,11 +4,23 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  redirect,
+  type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
+import { loadAppConfig } from './commands'
 import './styles/globals.css'
 
 export const meta = () => {
   return [{ title: 'Clip Translator' }]
+}
+
+export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+  const url = new URL(request.url)
+  const appConfig = await loadAppConfig()
+  if (!appConfig && url.pathname !== '/config') {
+    return redirect('/config')
+  }
+  return {}
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {

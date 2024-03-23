@@ -1,1 +1,1 @@
-export * from './greet'
+export * from './app-config'

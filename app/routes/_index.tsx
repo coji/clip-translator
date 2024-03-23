@@ -7,7 +7,7 @@ import {
   type ClientActionFunctionArgs,
 } from '@remix-run/react'
 import { z } from 'zod'
-import { greet } from '~/commands'
+import { loadAppConfig } from '~/commands'
 import { Button, Input, Label, Stack } from '~/components/ui'
 
 const schema = z.object({
@@ -19,7 +19,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   if (submission.status !== 'success') {
     return
   }
-  const greetMessage = await greet(submission.value.name)
+  const greetMessage = await loadAppConfig()
   return { greetMessage }
 }
 
@@ -33,8 +33,8 @@ export default function IndexPage() {
     <div>
       <h1 className="text-4xl font-bold">Hello Remix SPA mode on Tauri!</h1>
       <img src="/tauri.svg" alt="tauri" />
-      <Link to="/test" className="text-blue-500 underline">
-        Test Page
+      <Link to="/config" className="text-blue-500 underline">
+        Config Page
       </Link>
 
       <Stack asChild>
@@ -52,7 +52,7 @@ export default function IndexPage() {
 
           <Button type="submit">Greet</Button>
 
-          <p>{actionData?.greetMessage}</p>
+          <p>{JSON.stringify(actionData?.greetMessage)}</p>
         </Form>
       </Stack>
     </div>
