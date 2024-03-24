@@ -3,7 +3,6 @@ import { parseWithZod } from '@conform-to/zod'
 import {
   Form,
   Link,
-  redirect,
   useActionData,
   useLoaderData,
   type ClientActionFunctionArgs,
@@ -11,8 +10,8 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import { loadAppConfig } from '~/commands'
 import { Button, HStack, Stack, Textarea } from '~/components/ui'
+import { requireApiKey } from '~/services/config.client'
 import { useOpenAI } from '~/services/openai'
 
 const schema = z.object({
@@ -21,11 +20,7 @@ const schema = z.object({
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
-  console.log('clientLoader', { source })
-  const config = await loadAppConfig()
-  if (!config) {
-    return redirect('/config')
-  }
+  const config = await requireApiKey()
   return { source, config }
 }
 
@@ -41,6 +36,7 @@ export default function IndexPage() {
   const { source, config } = useLoaderData<typeof clientLoader>()
   const lastResult = useActionData<typeof clientAction>()
   const [form, fields] = useForm({
+    id: source,
     lastResult: lastResult,
     defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
@@ -59,7 +55,7 @@ export default function IndexPage() {
 
   return (
     <Stack>
-      <HStack className="flex-1">
+      <HStack className="flex-1" key={source}>
         <Form
           className="flex flex-1 flex-col gap-4"
           method="GET"

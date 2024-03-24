@@ -14,8 +14,8 @@ import {
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
 import { z } from 'zod'
-import { loadAppConfig, saveAppConfig } from '~/commands'
 import { Button, Input, Label, Stack, Textarea } from '~/components/ui'
+import { loadConfig, saveConfig } from '~/services/config.client'
 
 const schema = z.object({
   anthropic_api_key: z.string().max(200),
@@ -25,7 +25,7 @@ const schema = z.object({
 })
 
 export const clientLoader = async (_: ClientLoaderFunctionArgs) => {
-  const config = await loadAppConfig()
+  const config = await loadConfig()
   return { config }
 }
 
@@ -36,8 +36,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   }
 
   // 保存
-  console.log({ submission: submission.value })
-  await saveAppConfig(submission.value)
+  await saveConfig(submission.value)
 
   return redirect('/')
 }

@@ -4,23 +4,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  redirect,
-  type ClientLoaderFunctionArgs,
+  useNavigate,
 } from '@remix-run/react'
-import { loadAppConfig } from './commands'
+import { $path } from 'remix-routes'
+import { useGlobalShortcut } from './services/global-shortcut.client'
 import './styles/globals.css'
 
 export const meta = () => {
   return [{ title: 'Clip Translator' }]
-}
-
-export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
-  const url = new URL(request.url)
-  const appConfig = await loadAppConfig()
-  if (!appConfig && url.pathname !== '/config') {
-    return redirect('/config')
-  }
-  return {}
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -42,6 +33,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default function App() {
+  const navigate = useNavigate()
+  useGlobalShortcut(async () => {
+    navigate($path('/', { source: 'ショートカット' }))
+  })
+
   return <Outlet />
 }
 

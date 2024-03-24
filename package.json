@@ -30,6 +30,7 @@
     "react": "18.3.0-canary-a4939017f-20240320",
     "react-dom": "18.3.0-canary-a4939017f-20240320",
     "react-twc": "^1.4.1",
+    "remix-routes": "^1.7.2",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
