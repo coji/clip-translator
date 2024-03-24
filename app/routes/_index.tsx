@@ -52,8 +52,8 @@ export default function IndexPage() {
   })
 
   return (
-    <Stack>
-      <HStack className="flex-1" key={source}>
+    <Stack className="gap-2">
+      <HStack className="flex-1 gap-2" key={source}>
         <Form
           className="flex flex-1 flex-col gap-2"
           method="POST"

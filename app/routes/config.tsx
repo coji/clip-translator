@@ -7,14 +7,16 @@ import {
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
   Form,
+  Link,
   redirect,
   useActionData,
   useLoaderData,
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
+import { $path } from 'remix-routes'
 import { z } from 'zod'
-import { Button, Input, Label, Stack, Textarea } from '~/components/ui'
+import { Button, HStack, Input, Label, Stack, Textarea } from '~/components/ui'
 import { loadConfig, saveConfig } from '~/services/config.client'
 
 const schema = z.object({
@@ -53,18 +55,18 @@ export default function ConfigPage() {
   })
 
   return (
-    <Stack asChild>
+    <Stack className="p-4" asChild>
       <Form method="POST" {...getFormProps(form)}>
-        <h1>App Config</h1>
+        <h1 className="text-2xl font-bold">Configurations</h1>
 
-        <Stack>
+        <Stack className="flex-1">
           {/* anthropic  */}
           <div>
             <Label htmlFor={fields.anthropic_api_key.id}>
               Anthropic API Key
             </Label>
             <Input
-              {...getInputProps(fields.anthropic_api_key, { type: 'text' })}
+              {...getInputProps(fields.anthropic_api_key, { type: 'password' })}
             />
             <div
               className="text-destructive"
@@ -75,16 +77,27 @@ export default function ConfigPage() {
           </div>
 
           {/* system prompt */}
-          <div>
-            <Label htmlFor={fields.system_prompt.id}>System Prompt</Label>
-            <Textarea {...getTextareaProps(fields.system_prompt)} />
+          <div className="flex flex-1 flex-col">
+            <Label className="block" htmlFor={fields.system_prompt.id}>
+              System Prompt
+            </Label>
+            <Textarea
+              className="flex-1"
+              {...getTextareaProps(fields.system_prompt)}
+            />
+
             <div className="text-destructive" id={fields.system_prompt.errorId}>
               {fields.system_prompt.errors}
             </div>
           </div>
         </Stack>
 
-        <Button className="w-full">Save</Button>
+        <HStack>
+          <Button className="w-full" variant="ghost" asChild>
+            <Link to={$path('/')}>Cancel</Link>
+          </Button>
+          <Button className="w-full">Save</Button>
+        </HStack>
       </Form>
     </Stack>
   )
