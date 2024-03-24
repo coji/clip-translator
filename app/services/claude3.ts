@@ -1,4 +1,5 @@
 import { Anthropic } from '@anthropic-ai/sdk'
+import { Body, fetch } from '@tauri-apps/api/http'
 import { useCallback, useState } from 'react'
 
 export const useClaude3 = ({
@@ -37,4 +38,46 @@ export const useClaude3 = ({
   )
 
   return { getAnswer, result, isLoading }
+}
+
+export const callClaude3 = async ({
+  apiKey,
+  system,
+  messages,
+  model,
+  max_tokens,
+  temperature,
+}: {
+  apiKey: string
+  system: string
+  messages: { role: 'user'; content: string }[]
+  model:
+    | 'claude-3-opus-20240229'
+    | 'claude-3-sonnet-20240229'
+    | 'claude-3-haiku-20240307'
+  max_tokens: number
+  temperature?: number
+}) => {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    body: Body.json({
+      model,
+      max_tokens,
+      system,
+      messages,
+      temperature,
+    }),
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (response.ok) {
+    return response.data
+  }
+  throw new Error(
+    `Failed to call Claude3 API: ${JSON.stringify(response.data)}`,
+  )
 }

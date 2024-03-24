@@ -11,8 +11,8 @@ import {
 import { z } from 'zod'
 import { zx } from 'zodix'
 import { Button, HStack, Stack, Textarea } from '~/components/ui'
+import { callClaude3 } from '~/services/claude3'
 import { requireApiKey } from '~/services/config.client'
-import { useOpenAI } from '~/services/openai'
 
 const schema = z.object({
   source: z.string(),
@@ -25,32 +25,30 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
 }
 
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
+  const config = await requireApiKey()
   const submission = parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
-    return submission.reply()
+    return { response: null, lastResult: submission.reply() }
   }
-  return null
+
+  const response = await callClaude3({
+    apiKey: config.anthropic_api_key,
+    system: config.system_prompt,
+    model: 'claude-3-haiku-20240307',
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: submission.value.source }],
+  })
+  return { response, lastResult: submission.reply() }
 }
 
 export default function IndexPage() {
-  const { source, config } = useLoaderData<typeof clientLoader>()
-  const lastResult = useActionData<typeof clientAction>()
+  const { source } = useLoaderData<typeof clientLoader>()
+  const actionData = useActionData<typeof clientAction>()
   const [form, fields] = useForm({
     id: source,
-    lastResult: lastResult,
+    lastResult: actionData?.lastResult,
     defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
-    onSubmit: (_, { submission }) => {
-      if (submission?.status === 'success') {
-        getAnswer(submission.value.source)
-      }
-    },
-  })
-
-  const { getAnswer, result } = useOpenAI({
-    apiKey: config.openai_api_key,
-    organization: config.openai_organization,
-    systemPrompt: config.system_prompt,
   })
 
   return (
@@ -58,7 +56,7 @@ export default function IndexPage() {
       <HStack className="flex-1" key={source}>
         <Form
           className="flex flex-1 flex-col gap-2"
-          method="GET"
+          method="POST"
           {...getFormProps(form)}
         >
           <Textarea
@@ -72,7 +70,11 @@ export default function IndexPage() {
           </Button>
         </Form>
 
-        <Textarea readOnly className="flex-1" value={result ?? ''} />
+        <Textarea
+          readOnly
+          className="flex-1"
+          value={JSON.stringify(actionData?.response)}
+        />
       </HStack>
 
       <Link to="/config" className="text-xs text-primary underline">

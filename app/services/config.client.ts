@@ -3,15 +3,11 @@ import { fs, path } from '@tauri-apps/api'
 
 export interface Config {
   anthropic_api_key: string
-  openai_api_key: string
-  openai_organization: string
   system_prompt: string
 }
 
 export const defaultConfig = {
   anthropic_api_key: '',
-  openai_api_key: '',
-  openai_organization: '',
   system_prompt: `あなたは言語翻訳AIアシスタントです。以下の手順に従って、入力されたテキストを翻訳してください。
 
 手順:
@@ -52,10 +48,7 @@ export const loadConfig = async (): Promise<Config> => {
 
 export const requireApiKey = async () => {
   const config = await loadConfig()
-  if (
-    config.anthropic_api_key ||
-    (config.openai_api_key && config.openai_organization)
-  ) {
+  if (config.anthropic_api_key) {
     return config
   }
   throw redirect('/config')
