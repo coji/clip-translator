@@ -57,7 +57,7 @@ export default function IndexPage() {
     <Stack>
       <HStack className="flex-1" key={source}>
         <Form
-          className="flex flex-1 flex-col gap-4"
+          className="flex flex-1 flex-col gap-2"
           method="GET"
           {...getFormProps(form)}
         >

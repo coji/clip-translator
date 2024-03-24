@@ -1,9 +1,12 @@
+import { useNavigate } from '@remix-run/react'
+import { clipboard, window as tauri_window } from '@tauri-apps/api'
 import {
   isRegistered,
   register,
   unregister,
 } from '@tauri-apps/api/globalShortcut'
 import { useEffect } from 'react'
+import { $path } from 'remix-routes'
 import { sendNotify } from './notification.client'
 
 const registerShortcut = async (
@@ -12,18 +15,29 @@ const registerShortcut = async (
 ) => {
   if (!(await isRegistered(shortcut))) {
     await register(shortcut, async (keys) => {
-      await sendNotify({ title: 'Hotkey', body: 'CmdOrCtrl+T is pressed' })
+      await sendNotify({
+        title: 'Clip Translator',
+        body: 'CmdOrCtrl+L is pressed',
+      })
       callback(keys)
     })
   }
 }
 
-export const useGlobalShortcut = async (callback: (keys: string) => void) => {
+export const useGlobalShortcut = async () => {
+  const navigate = useNavigate()
+
   useEffect(() => {
-    registerShortcut('CmdOrCtrl+T', callback)
+    registerShortcut('CmdOrCtrl+L', async () => {
+      const clipboardText = await clipboard.readText()
+      if (clipboardText) {
+        navigate($path('/', { source: clipboardText }))
+        await tauri_window.getCurrent().setFocus()
+      }
+    })
 
     return () => {
-      unregister('CmdOrCtrl+T')
+      unregister('CmdOrCtrl+L')
     }
-  }, [callback])
+  }, [navigate])
 }

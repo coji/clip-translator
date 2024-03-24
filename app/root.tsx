@@ -4,9 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useNavigate,
 } from '@remix-run/react'
-import { $path } from 'remix-routes'
 import { useGlobalShortcut } from './services/global-shortcut.client'
 import './styles/globals.css'
 
@@ -23,7 +21,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Meta />
         <Links />
       </head>
-      <body className="grid min-h-screen grid-cols-1 p-4">
+      <body className="grid min-h-screen grid-cols-1 p-2">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -33,11 +31,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default function App() {
-  const navigate = useNavigate()
-  useGlobalShortcut(async () => {
-    navigate($path('/', { source: 'ショートカット' }))
-  })
-
+  useGlobalShortcut()
   return <Outlet />
 }
 

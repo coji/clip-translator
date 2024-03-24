@@ -16,7 +16,10 @@
         "all": false,
         "open": true
       },
-       "fs": {
+      "window": {
+        "setFocus": true
+      },
+      "fs": {
         "scope": [ "$APP", "$APP/**/*" ],
         "createDir": true,
         "readDir": true,
@@ -25,6 +28,9 @@
       },
       "path": {
         "all": true
+      },
+      "clipboard": {
+        "readText": true
       },
       "globalShortcut": {
         "all": true
