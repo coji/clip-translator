@@ -77,7 +77,7 @@ export default function ConfigPage() {
           </div>
 
           {/* system prompt */}
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-1">
             <Label className="block" htmlFor={fields.system_prompt.id}>
               System Prompt
             </Label>
