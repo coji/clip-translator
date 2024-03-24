@@ -5,12 +5,13 @@ import {
   Link,
   useActionData,
   useLoaderData,
+  useNavigation,
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
 import { z } from 'zod'
 import { zx } from 'zodix'
-import { Button, HStack, Stack, Textarea } from '~/components/ui'
+import { Button, Skeleton, Stack, Textarea } from '~/components/ui'
 import { callClaude3 } from '~/services/claude3'
 import { requireApiKey } from '~/services/config.client'
 
@@ -50,12 +51,13 @@ export default function IndexPage() {
     defaultValue: { source },
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
   })
+  const navigation = useNavigation()
 
   return (
     <Stack className="gap-2">
-      <HStack className="flex-1 gap-2" key={source}>
+      <div className="grid flex-1 grid-cols-2 gap-2" key={source}>
         <Form
-          className="flex flex-1 flex-col gap-2"
+          className="flex flex-col gap-2"
           method="POST"
           {...getFormProps(form)}
         >
@@ -70,12 +72,12 @@ export default function IndexPage() {
           </Button>
         </Form>
 
-        <Textarea
-          readOnly
-          className="flex-1"
-          value={JSON.stringify(actionData?.response)}
-        />
-      </HStack>
+        {navigation.state === 'submitting' ? (
+          <Skeleton />
+        ) : (
+          <Textarea readOnly value={JSON.stringify(actionData?.response)} />
+        )}
+      </div>
 
       <Link to="/config" className="text-xs text-primary underline">
         Config
