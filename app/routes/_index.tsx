@@ -1,5 +1,3 @@
-import { getFormProps, getTextareaProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
   Link,
   useFetcher,
@@ -22,10 +20,6 @@ import {
 import { callClaude3 } from '~/services/claude3'
 import { requireApiKey } from '~/services/config.client'
 
-const schema = z.object({
-  source: z.string(),
-})
-
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
   const config = await requireApiKey()
@@ -34,10 +28,8 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
 
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const config = await requireApiKey()
-  const submission = parseWithZod(await request.formData(), { schema })
-  if (submission.status !== 'success') {
-    return { lastResult: submission.reply() }
-  }
+  const { source } = await zx.parseForm(request, { source: z.string() })
+  console.log('clientAction', source)
 
   try {
     const response = await callClaude3({
@@ -45,12 +37,12 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
       system: config.system_prompt,
       model: 'claude-3-haiku-20240307',
       max_tokens: 1024,
-      messages: [{ role: 'user', content: submission.value.source }],
+      messages: [{ role: 'user', content: source }],
     })
 
     return {
+      error: null,
       response: response.content[0].text,
-      lastResult: submission.reply(),
     }
   } catch (e) {
     let errorMessage = ''
@@ -59,9 +51,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     } else {
       errorMessage = String(e)
     }
-    return {
-      lastResult: submission.reply({ formErrors: [errorMessage] }),
-    }
+    return { error: errorMessage, response: undefined }
   }
 }
 
@@ -69,48 +59,33 @@ export default function IndexPage() {
   const { source } = useLoaderData<typeof clientLoader>()
   const fetcher = useFetcher<typeof clientAction>()
   const actionData = fetcher.data
-  const [form, fields] = useForm({
-    id: source,
-    lastResult: actionData?.lastResult,
-    defaultValue: { source },
-    shouldValidate: 'onSubmit',
-    shouldRevalidate: 'onInput',
-    constraint: getZodConstraint(schema),
-    onValidate: ({ formData }) => parseWithZod(formData, { schema }),
-  })
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (source) {
-      form.validate()
-      fetcher.submit(form.id, { method: 'POST' })
+      setTimeout(() => {
+        console.log(source)
+        fetcher.submit({ source }, { method: 'POST' })
+      }, 100)
     }
   }, [source])
 
   return (
     <Stack className="gap-2">
       <div className="grid flex-1 grid-cols-2 gap-2" key={source}>
-        <fetcher.Form
-          className="flex flex-col gap-2"
-          method="POST"
-          {...getFormProps(form)}
-        >
+        <fetcher.Form className="flex flex-col gap-2" method="POST">
           <Textarea
             className="flex-1"
             placeholder="Enter a source text..."
-            {...getTextareaProps(fields.source)}
-            key={fields.source.key}
+            name="source"
+            defaultValue={source}
           />
 
-          {fields.source.errors && (
-            <div className="text-destructive">{fields.source.errors}</div>
-          )}
-
-          {form.errors && (
+          {actionData?.error && (
             <Alert variant="destructive">
               <AlertTitle>System Error</AlertTitle>
               <AlertDescription className="line-clamp-3">
-                {form.errors}
+                {actionData.error}
               </AlertDescription>
             </Alert>
           )}
