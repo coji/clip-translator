@@ -18,6 +18,7 @@ const registerShortcut = async (
       await sendNotify({
         title: 'Clip Translator',
         body: 'CmdOrCtrl+L is pressed',
+        icon: 'd',
       })
       callback(keys)
     })
@@ -27,17 +28,19 @@ const registerShortcut = async (
 export const useGlobalShortcut = async () => {
   const navigate = useNavigate()
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    console.log('useGlobalShortcut useEffect')
     registerShortcut('CmdOrCtrl+L', async () => {
       const clipboardText = await clipboard.readText()
       if (clipboardText) {
-        navigate($path('/', { source: clipboardText }))
         await tauri_window.getCurrent().setFocus()
+        navigate($path('/', { source: clipboardText }))
       }
     })
 
     return () => {
       unregister('CmdOrCtrl+L')
     }
-  }, [navigate])
+  }, [])
 }
