@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "remix vite:dev",
-    "build": "tsc && remix vite:build",
+    "build": "remix vite:build",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "biome lint .",
