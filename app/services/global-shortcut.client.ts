@@ -30,7 +30,6 @@ export const useGlobalShortcut = async () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    console.log('useGlobalShortcut useEffect')
     registerShortcut('CmdOrCtrl+L', async () => {
       const clipboardText = await clipboard.readText()
       if (clipboardText) {
