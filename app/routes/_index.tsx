@@ -12,6 +12,8 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  Badge,
+  HStack,
   Spinner,
   Stack,
   Textarea,
@@ -30,7 +32,6 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const config = await requireApiKey()
   const { source } = await zx.parseForm(request, { source: z.string() })
-  console.log('clientAction', source)
 
   try {
     const response = await callClaude3({
@@ -44,6 +45,10 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     return {
       error: null,
       response: response.content[0].text,
+      cost: (
+        (response.usage.input_tokens / 1000000) * 0.25 +
+        (response.usage.output_tokens / 1000000) * 1.25 * 151
+      ).toFixed(2),
     }
   } catch (e) {
     let errorMessage = ''
@@ -52,7 +57,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     } else {
       errorMessage = String(e)
     }
-    return { error: errorMessage, response: undefined }
+    return { error: errorMessage, response: undefined, cost: undefined }
   }
 }
 
@@ -108,11 +113,18 @@ export default function IndexPage() {
         </div>
       </div>
 
-      <div>
-        <Link to="/config" className="text-xs text-primary underline">
+      <HStack className="items-center text-xs">
+        <Link to="/config" className=" text-primary underline">
           Config
         </Link>
-      </div>
+        <div className="flex-1" />
+        {actionData?.cost && (
+          <HStack className="items-center gap-1">
+            <span>LLMコスト</span>
+            <Badge className="py-0">{actionData?.cost} 円</Badge>
+          </HStack>
+        )}
+      </HStack>
     </Stack>
   )
 }
