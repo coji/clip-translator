@@ -58,6 +58,11 @@ export const callClaude3 = async ({
   max_tokens: number
   temperature?: number
 }) => {
+  // if (import.meta.env.DEV) {
+  //   await new Promise((resolve) => setTimeout(resolve, 1000))
+  //   return 'This is example translated result because of in development process.'
+  // }
+
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     body: Body.json({
@@ -74,10 +79,8 @@ export const callClaude3 = async ({
     },
   })
 
-  if (response.ok) {
-    return response.data
+  if (!response.ok) {
+    throw new Error(`Translation Error: ${JSON.stringify(response.data)}`)
   }
-  throw new Error(
-    `Failed to call Claude3 API: ${JSON.stringify(response.data)}`,
-  )
+  return response.data as Anthropic.Messages.Message
 }
