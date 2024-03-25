@@ -5,18 +5,19 @@ import {
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-  Button,
-  Skeleton,
+  Spinner,
   Stack,
   Textarea,
 } from '~/components/ui'
+import { useDebounce } from '~/hooks/useDebounce'
+import { cn } from '~/libs/utils'
 import { callClaude3 } from '~/services/claude3'
 import { requireApiKey } from '~/services/config.client'
 
@@ -58,17 +59,21 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
 export default function IndexPage() {
   const { source } = useLoaderData<typeof clientLoader>()
   const fetcher = useFetcher<typeof clientAction>()
+  const [input, setInput] = useState('')
+  const debouncedInput = useDebounce(input, 500)
   const actionData = fetcher.data
+  const isSubmitting = fetcher.state === 'submitting'
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (source) {
-      setTimeout(() => {
-        console.log(source)
-        fetcher.submit({ source }, { method: 'POST' })
-      }, 100)
-    }
+    if (source) fetcher.submit({ source }, { method: 'POST' })
   }, [source])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (debouncedInput)
+      fetcher.submit({ source: debouncedInput }, { method: 'POST' })
+  }, [debouncedInput])
 
   return (
     <Stack className="gap-2">
@@ -79,6 +84,7 @@ export default function IndexPage() {
             placeholder="Enter a source text..."
             name="source"
             defaultValue={source}
+            onChange={(e) => setInput(e.target.value)}
           />
 
           {actionData?.error && (
@@ -89,21 +95,17 @@ export default function IndexPage() {
               </AlertDescription>
             </Alert>
           )}
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={fetcher.state === 'submitting'}
-          >
-            Translate
-          </Button>
         </fetcher.Form>
 
-        {fetcher.state === 'submitting' ? (
-          <Skeleton />
-        ) : (
-          <Textarea readOnly value={actionData?.response} />
-        )}
+        <div className="relative grid grid-cols-1 place-items-center">
+          <Textarea
+            className={cn('absolute inset-0', isSubmitting && 'bg-slate-100')}
+            readOnly
+            value={`${actionData?.response ?? ''}${isSubmitting ? '...' : ''}`}
+          />
+
+          <Spinner show={isSubmitting} />
+        </div>
       </div>
 
       <div>
