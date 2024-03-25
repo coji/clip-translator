@@ -65,6 +65,7 @@ export default function IndexPage() {
             className="flex-1"
             placeholder="Enter a source text..."
             {...getTextareaProps(fields.source)}
+            key={fields.source.key}
           />
 
           <Button type="submit" className="w-full">
