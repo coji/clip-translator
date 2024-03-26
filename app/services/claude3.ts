@@ -80,7 +80,16 @@ export const callClaude3 = async ({
   })
 
   if (!response.ok) {
-    throw new Error(`Translation Error: ${JSON.stringify(response.data)}`)
+    throw new Error(`Error: ${JSON.stringify(response.data)}`)
   }
   return response.data as Anthropic.Messages.Message
+}
+
+export const calcTokenCostUSD = (
+  _: string,
+  usage: Anthropic.Messages.Usage,
+) => {
+  const inputCost = (usage.input_tokens / 1000000) * 0.25
+  const outputCost = (usage.output_tokens / 1000000) * 1.25
+  return inputCost + outputCost
 }
