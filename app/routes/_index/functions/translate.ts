@@ -15,10 +15,12 @@ interface TranslateError {
   error: string
 }
 
+export type Claude3Model = Parameters<typeof callClaude3>[0]['model']
+
 interface TranslateProps {
   apiKey: string
   systemPrompt: string
-  model: Parameters<typeof callClaude3>[0]['model']
+  model: Claude3Model
   source: string
 }
 export const translate = async ({

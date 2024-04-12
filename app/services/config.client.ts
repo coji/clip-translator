@@ -4,6 +4,7 @@ import { fs, path } from '@tauri-apps/api'
 export interface Config {
   anthropic_api_key: string
   system_prompt: string
+  model: string
 }
 
 export const defaultConfig = {
@@ -30,6 +31,7 @@ Hello, how are you doing today?
 
 英訳:
 Good evening. It's very hot today, isn't it?`,
+  model: 'claude-3-haiku-20240307',
 } as const satisfies Config
 
 const getConfigPath = async () => {

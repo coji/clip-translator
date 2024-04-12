@@ -1,44 +1,12 @@
-import { Anthropic } from '@anthropic-ai/sdk'
+import type { Anthropic } from '@anthropic-ai/sdk'
 import { Body, fetch } from '@tauri-apps/api/http'
-import { useCallback, useState } from 'react'
 
-export const useClaude3 = ({
-  apiKey,
-  systemPrompt,
-}: {
-  apiKey: string
-  systemPrompt: string
-}) => {
-  const [result, setResult] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const anthropic = new Anthropic({ apiKey })
-
-  const getAnswer = useCallback(
-    async (question: string) => {
-      setResult('')
-      setIsLoading(true)
-      const response = await anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 1000,
-        messages: [
-          { role: 'user', content: systemPrompt },
-          { role: 'user', content: question },
-        ],
-        stream: true,
-      })
-
-      for await (const message of response) {
-        if (message.type === 'content_block_delta') {
-          setResult((prev) => `${prev}${message.delta.text}`)
-        }
-      }
-      setIsLoading(false)
-    },
-    [anthropic, systemPrompt],
-  )
-
-  return { getAnswer, result, isLoading }
+export const Models = {
+  opus: 'claude-3-opus-20240229' as const,
+  sonnet: 'claude-3-sonnet-20240229' as const,
+  haiku: 'claude-3-haiku-20240307' as const,
 }
+export type Claude3Models = (typeof Models)[keyof typeof Models]
 
 export const callClaude3 = async ({
   apiKey,
@@ -51,10 +19,7 @@ export const callClaude3 = async ({
   apiKey: string
   system: string
   messages: { role: 'user'; content: string }[]
-  model:
-    | 'claude-3-opus-20240229'
-    | 'claude-3-sonnet-20240229'
-    | 'claude-3-haiku-20240307'
+  model: Claude3Models
   max_tokens: number
   temperature?: number
 }) => {
@@ -85,11 +50,23 @@ export const callClaude3 = async ({
   return response.data as Anthropic.Messages.Message
 }
 
+const inputModelCostMap: Record<Claude3Models, number> = {
+  'claude-3-opus-20240229': 15,
+  'claude-3-sonnet-20240229': 3,
+  'claude-3-haiku-20240307': 0.25,
+}
+
+const outputModelCostMap: Record<Claude3Models, number> = {
+  'claude-3-opus-20240229': 75,
+  'claude-3-sonnet-20240229': 15,
+  'claude-3-haiku-20240307': 1.25,
+}
+
 export const calcTokenCostUSD = (
-  _: string,
+  model: Claude3Models,
   usage: Anthropic.Messages.Usage,
 ) => {
-  const inputCost = (usage.input_tokens / 1000000) * 0.25
-  const outputCost = (usage.output_tokens / 1000000) * 1.25
+  const inputCost = (usage.input_tokens / 1000000) * inputModelCostMap[model]
+  const outputCost = (usage.output_tokens / 1000000) * outputModelCostMap[model]
   return inputCost + outputCost
 }

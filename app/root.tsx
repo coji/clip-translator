@@ -21,7 +21,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <Meta />
         <Links />
       </head>
-      <body className="grid min-h-screen grid-cols-1 p-2">
+      <body>
         {children}
         <ScrollRestoration />
         <Scripts />
