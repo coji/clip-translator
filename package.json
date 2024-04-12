@@ -14,9 +14,9 @@
     "validate": "pnpm run lint && pnpm run format && pnpm run typecheck"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.19.0",
-    "@conform-to/react": "^1.0.6",
-    "@conform-to/zod": "^1.0.6",
+    "@anthropic-ai/sdk": "^0.20.4",
+    "@conform-to/react": "^1.1.0",
+    "@conform-to/zod": "^1.1.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
@@ -25,9 +25,9 @@
     "@tauri-apps/api": "^1.5.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "langchain": "^0.1.30",
-    "lucide-react": "^0.363.0",
-    "openai": "^4.29.2",
+    "langchain": "^0.1.33",
+    "lucide-react": "^0.367.0",
+    "openai": "^4.33.0",
     "react": "18.3.0-canary-a4939017f-20240320",
     "react-dom": "18.3.0-canary-a4939017f-20240320",
     "react-twc": "^1.4.1",
@@ -38,20 +38,20 @@
     "zodix": "^0.4.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.6.3",
+    "@biomejs/biome": "^1.6.4",
     "@remix-run/dev": "^2.8.1",
     "@tauri-apps/cli": "^1.5.11",
-    "@types/react": "^18.2.71",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^18.2.77",
+    "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.2.1",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^3.2.4",
-    "prettier-plugin-tailwindcss": "^0.5.12",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.4.3",
-    "vite": "^5.2.6",
+    "prettier-plugin-tailwindcss": "^0.5.13",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8",
     "vite-tsconfig-paths": "^4.3.2"
   }
 }
