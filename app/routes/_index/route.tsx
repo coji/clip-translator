@@ -20,15 +20,17 @@ import {
 } from '~/components/ui'
 import { useDebounce } from '~/hooks/useDebounce'
 import { cn } from '~/libs/utils'
-import { translate } from '~/routes/_index/functions/translate'
 import { Models } from '~/services/claude3'
 import { requireApiKey, saveConfig } from '~/services/config.client'
 import {
   FooterMenu,
   FooterMenuItem,
   FooterSpacer,
-} from './components/FooterMenu'
-import { ModelSelector } from './components/ModelSelector'
+  IndexLayout,
+  ModelSelect,
+  TranslationPane,
+} from './components'
+import { translate } from './functions'
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
@@ -74,19 +76,11 @@ export default function IndexPage() {
   }, [debouncedInput])
 
   return (
-    <fetcher.Form
-      className="grid min-h-screen grid-cols-1 bg-slate-200 p-2"
-      method="POST"
-    >
-      <Stack className="gap-2">
-        <div
-          className="grid flex-1 grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1"
-          key={source}
-        >
+    <IndexLayout asChild>
+      <fetcher.Form method="POST">
+        <TranslationPane key={source}>
           {/* source text */}
-          <input type="hidden" value={model} />
           <Textarea
-            className="flex-1"
             placeholder="Enter a source text..."
             name="source"
             defaultValue={source}
@@ -119,7 +113,7 @@ export default function IndexPage() {
               show={isSubmitting}
             />
           </div>
-        </div>
+        </TranslationPane>
 
         <FooterMenu>
           {/* config */}
@@ -144,7 +138,8 @@ export default function IndexPage() {
           {/* model  */}
           <FooterMenuItem>
             <span>Model</span>
-            <ModelSelector
+            <ModelSelect
+              name="model"
               value={model}
               onChangeValue={(newModel) => {
                 setModel(newModel)
@@ -158,7 +153,7 @@ export default function IndexPage() {
             />
           </FooterMenuItem>
         </FooterMenu>
-      </Stack>
-    </fetcher.Form>
+      </fetcher.Form>
+    </IndexLayout>
   )
 }

@@ -13,7 +13,7 @@ interface ModelSelectorProps
   onChangeValue?: (model: string) => void
   value?: string
 }
-export const ModelSelector = ({
+export const ModelSelect = ({
   onChangeValue,
   value,
   className,
