@@ -31,13 +31,13 @@ import {
   Stack,
   Textarea,
 } from '~/components/ui'
-import { Models } from '~/services/claude3'
+import { ModelIdSchema, Models } from '~/services/claude3'
 import { loadConfig, saveConfig } from '~/services/config.client'
 
 const schema = z.object({
   anthropic_api_key: z.string().max(200),
   system_prompt: z.string().max(100000),
-  model: z.string(),
+  model: ModelIdSchema,
 })
 
 export const clientLoader = async (_: ClientLoaderFunctionArgs) => {

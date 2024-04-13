@@ -1,11 +1,6 @@
 import { redirect } from '@remix-run/react'
 import { fs, path } from '@tauri-apps/api'
-
-export interface Config {
-  anthropic_api_key: string
-  system_prompt: string
-  model: string
-}
+import { z } from 'zod'
 
 export const defaultConfig = {
   anthropic_api_key: '',
@@ -32,7 +27,17 @@ Hello, how are you doing today?
 英訳:
 Good evening. It's very hot today, isn't it?`,
   model: 'claude-3-haiku-20240307',
-} as const satisfies Config
+} as const
+
+const ConfigSchema = z.object({
+  anthropic_api_key: z
+    .string()
+    .optional()
+    .default(defaultConfig.anthropic_api_key),
+  system_prompt: z.string().optional().default(defaultConfig.system_prompt),
+  model: z.string().optional().default(defaultConfig.model),
+})
+export type Config = z.infer<typeof ConfigSchema>
 
 const getConfigPath = async () => {
   const appConfigDir = await path.appConfigDir()
@@ -41,11 +46,13 @@ const getConfigPath = async () => {
 }
 
 export const loadConfig = async (): Promise<Config> => {
-  const configPath = await getConfigPath()
-  const configStr = await fs.readTextFile(configPath).catch(() => {
-    return JSON.stringify(defaultConfig)
-  })
-  return JSON.parse(configStr)
+  try {
+    const configPath = await getConfigPath()
+    const configStr = await fs.readTextFile(configPath)
+    return ConfigSchema.parse(JSON.parse(configStr))
+  } catch {
+    return defaultConfig
+  }
 }
 
 export const requireApiKey = async () => {
