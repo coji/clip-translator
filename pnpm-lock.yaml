@@ -45,11 +45,11 @@ dependencies:
     specifier: ^0.1.33
     version: 0.1.33
   lucide-react:
-    specifier: ^0.367.0
-    version: 0.367.0(react@18.3.0-canary-a4939017f-20240320)
+    specifier: ^0.368.0
+    version: 0.368.0(react@18.3.0-canary-a4939017f-20240320)
   openai:
-    specifier: ^4.33.0
-    version: 4.33.0
+    specifier: ^4.33.1
+    version: 4.33.1
   react:
     specifier: 18.3.0-canary-a4939017f-20240320
     version: 18.3.0-canary-a4939017f-20240320
@@ -1101,8 +1101,8 @@ packages:
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
     dev: true
 
-  /@langchain/community@0.0.47:
-    resolution: {integrity: sha512-j20KhnWs16K/qxaY3QccOFMfcEmiTXN00NB1IPeO1pexRsvHL7GfqZ8rR5cOSSBfft2iuoGxaj1EZIyxh5ftgA==}
+  /@langchain/community@0.0.48:
+    resolution: {integrity: sha512-jG7dpJkgKtwbrSLsxW4mXmECopTj5tRt4+B+QcKCqZm7yEghFR44Xj5OkDWtzzsjpL47RJck5AJ8MsQnmi7WDQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@aws-crypto/sha256-js': ^5.0.0
@@ -1117,7 +1117,7 @@ packages:
       '@azure/search-documents': ^12.0.0
       '@clickhouse/client': ^0.2.5
       '@cloudflare/ai': '*'
-      '@datastax/astra-db-ts': ^0.1.4
+      '@datastax/astra-db-ts': ^1.0.0
       '@elastic/elasticsearch': ^8.4.0
       '@getmetal/metal-sdk': '*'
       '@getzep/zep-js': ^0.9.0
@@ -1399,7 +1399,7 @@ packages:
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
-      js-tiktoken: 1.0.10
+      js-tiktoken: 1.0.11
       langsmith: 0.1.14
       ml-distance: 4.0.1
       p-queue: 6.6.2
@@ -1414,8 +1414,8 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       '@langchain/core': 0.1.57
-      js-tiktoken: 1.0.10
-      openai: 4.33.0
+      js-tiktoken: 1.0.11
+      openai: 4.33.1
       zod: 3.22.4
       zod-to-json-schema: 3.22.5(zod@3.22.4)
     transitivePeerDependencies:
@@ -2843,7 +2843,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001609
-      electron-to-chromium: 1.4.735
+      electron-to-chromium: 1.4.736
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
     dev: true
@@ -3305,16 +3305,16 @@ packages:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
     dev: true
 
-  /ejs@3.1.9:
-    resolution: {integrity: sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==}
+  /ejs@3.1.10:
+    resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
     engines: {node: '>=0.10.0'}
     hasBin: true
     dependencies:
       jake: 10.8.7
     dev: false
 
-  /electron-to-chromium@1.4.735:
-    resolution: {integrity: sha512-pkYpvwg8VyOTQAeBqZ7jsmpCjko1Qc6We1ZtZCjRyYbT5v4AIUKDy5cQTRotQlSSZmMr8jqpEt6JtOj5k7lR7A==}
+  /electron-to-chromium@1.4.736:
+    resolution: {integrity: sha512-Rer6wc3ynLelKNM4lOCg7/zPQj8tPOCB2hzD32PX9wd3hgRRi9MxEbmkFCokzcEhRVMiOVLjnL9ig9cefJ+6+Q==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -4347,8 +4347,8 @@ packages:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
 
-  /js-tiktoken@1.0.10:
-    resolution: {integrity: sha512-ZoSxbGjvGyMT13x6ACo9ebhDha/0FHdKA+OsQcMOWcm1Zs7r90Rhk5lhERLzji+3rA7EKpXCgwXcM5fF3DMpdA==}
+  /js-tiktoken@1.0.11:
+    resolution: {integrity: sha512-PajXFLq2vx7/8jllQZ43vzNpAai/0MOVdJjW/UrNyJorNQRTjHrqdGJG/mjHVy7h9M6dW6CaG43eNLMYFkTh6w==}
     dependencies:
       base64-js: 1.5.1
     dev: false
@@ -4580,11 +4580,11 @@ packages:
         optional: true
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
-      '@langchain/community': 0.0.47
+      '@langchain/community': 0.0.48
       '@langchain/core': 0.1.57
       '@langchain/openai': 0.0.28
       binary-extensions: 2.3.0
-      js-tiktoken: 1.0.10
+      js-tiktoken: 1.0.11
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
       langchainhub: 0.0.8
@@ -4780,8 +4780,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /lucide-react@0.367.0(react@18.3.0-canary-a4939017f-20240320):
-    resolution: {integrity: sha512-3FWiBaJiqMrx5a1sjH3CVdPqWnw/Z/PTVeeTDmOeILSs+8Ah+VhCd4FQMeHo6Z0WxHcm9piIOtilQwvceiCCKQ==}
+  /lucide-react@0.368.0(react@18.3.0-canary-a4939017f-20240320):
+    resolution: {integrity: sha512-soryVrCjheZs8rbXKdINw9B8iPi5OajBJZMJ1HORig89ljcOcEokKKAgGbg3QWxSXel7JwHOfDFUdDHAKyUAMw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
@@ -5625,8 +5625,8 @@ packages:
       mimic-fn: 2.1.0
     dev: true
 
-  /openai@4.33.0:
-    resolution: {integrity: sha512-Sh4KvplkvkAREuhb8yZpohqsOo08cBBu6LNWLD8YyMxe8yCxbE+ouJYUs1X2oDPrzQGANj0rFNQYiwW9gWLBOg==}
+  /openai@4.33.1:
+    resolution: {integrity: sha512-0DH572aSxGTT1JPOXgJQ9mjiuSPg/7scPot8hLc5I1mfQxPxLXTZWJpWerKaIWOuPkR2nrB0SamGDEehH8RuWA==}
     hasBin: true
     dependencies:
       '@types/node': 18.19.31
@@ -6423,7 +6423,7 @@ packages:
     hasBin: true
     dependencies:
       chokidar: 3.6.0
-      ejs: 3.1.9
+      ejs: 3.1.10
       meow: 9.0.0
       mkdirp: 1.0.4
       slash: 3.0.0
