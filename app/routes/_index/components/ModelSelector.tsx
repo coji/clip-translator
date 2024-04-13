@@ -11,12 +11,10 @@ import { Models } from '~/services/claude3'
 interface ModelSelectorProps
   extends React.ComponentProps<typeof SelectTrigger> {
   onChangeValue?: (model: string) => void
-  defaultValue?: string
   value?: string
 }
 export const ModelSelector = ({
   onChangeValue,
-  defaultValue,
   value,
   className,
   name,
@@ -24,12 +22,17 @@ export const ModelSelector = ({
 }: ModelSelectorProps) => {
   return (
     <Select
-      defaultValue={defaultValue}
       value={value}
       name={name}
       onValueChange={(value) => onChangeValue?.(value)}
     >
-      <SelectTrigger className={cn('capitalize', className)} {...rest}>
+      <SelectTrigger
+        className={cn(
+          'h-auto py-1 text-xs capitalize focus:ring-offset-0',
+          className,
+        )}
+        {...rest}
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

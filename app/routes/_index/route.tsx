@@ -6,6 +6,7 @@ import {
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import {
@@ -13,7 +14,6 @@ import {
   AlertDescription,
   AlertTitle,
   Badge,
-  HStack,
   Spinner,
   Stack,
   Textarea,
@@ -23,7 +23,12 @@ import { cn } from '~/libs/utils'
 import { translate } from '~/routes/_index/functions/translate'
 import { Models } from '~/services/claude3'
 import { requireApiKey, saveConfig } from '~/services/config.client'
-import { ModelSelector } from './components/model-selector'
+import {
+  FooterMenu,
+  FooterMenuItem,
+  FooterSpacer,
+} from './components/FooterMenu'
+import { ModelSelector } from './components/ModelSelector'
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
@@ -70,82 +75,89 @@ export default function IndexPage() {
 
   return (
     <fetcher.Form
-      className="grid min-h-screen grid-cols-1 bg-slate-100 p-2"
+      className="grid min-h-screen grid-cols-1 bg-slate-200 p-2"
       method="POST"
     >
       <Stack className="gap-2">
-        <div className="grid flex-1 grid-cols-2 gap-2" key={source}>
+        <div
+          className="grid flex-1 grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1"
+          key={source}
+        >
           {/* source text */}
-          <div className="flex flex-col gap-2">
-            <input type="hidden" value={model} />
-            <Textarea
-              className="flex-1"
-              placeholder="Enter a source text..."
-              name="source"
-              defaultValue={source}
-              onChange={(e) => setInput(e.target.value)}
-            />
-
-            {actionData?.type === 'error' && (
-              <Alert variant="destructive">
-                <AlertTitle>System Error</AlertTitle>
-                <AlertDescription className="line-clamp-3">
-                  {actionData.error}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+          <input type="hidden" value={model} />
+          <Textarea
+            className="flex-1"
+            placeholder="Enter a source text..."
+            name="source"
+            defaultValue={source}
+            onChange={(e) => setInput(e.target.value)}
+          />
 
           {/* translated text */}
           <div className="relative grid grid-cols-1 place-items-center">
-            <Textarea
-              className={cn('absolute inset-0', isSubmitting && 'bg-slate-100')}
-              readOnly
-              value={`${actionData?.type === 'success' ? actionData.destinationText : ''}${isSubmitting ? '...' : ''}`}
-            />
+            <Stack className="absolute inset-0 mt-0.5 overflow-auto rounded bg-background p-2">
+              <ReactMarkdown
+                className={cn(
+                  isSubmitting && 'bg-slate-50 text-muted-foreground',
+                )}
+              >
+                {`${actionData?.type === 'success' ? actionData.destinationText : ''}${isSubmitting ? '...' : ''}`}
+              </ReactMarkdown>
 
-            <Spinner show={isSubmitting} />
+              {actionData?.type === 'error' && (
+                <Alert variant="destructive">
+                  <AlertTitle>System Error</AlertTitle>
+                  <AlertDescription className="line-clamp-3">
+                    {actionData.error}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </Stack>
+
+            <Spinner
+              className="absolute inset-0 z-10 m-auto"
+              show={isSubmitting}
+            />
           </div>
         </div>
 
-        {/* footer menus */}
-        <HStack className="items-center text-xs">
-          {/*  config */}
-          <Link to="/config" className=" text-primary underline">
-            Config
-          </Link>
+        <FooterMenu>
+          {/* config */}
+          <FooterMenuItem asChild>
+            <Link to="/config" className=" text-primary underline">
+              Config
+            </Link>
+          </FooterMenuItem>
 
-          <div className="flex-1" />
+          <FooterSpacer />
 
-          <HStack className="items-center gap-2">
-            {/* pricing */}
-            {actionData?.type === 'success' && (
-              <HStack className="items-center gap-1">
-                <span>LLMコスト</span>
-                <Badge className="py-0">
-                  {(actionData?.cost * 151).toFixed(2)} 円
-                </Badge>
-              </HStack>
-            )}
+          {/* cost */}
+          {actionData?.type === 'success' && (
+            <FooterMenuItem>
+              <span className="whitespace-nowrap">LLMコスト</span>
+              <Badge className="whitespace-nowrap py-0">
+                {(actionData?.cost * 151).toFixed(2)} <small>円</small>
+              </Badge>
+            </FooterMenuItem>
+          )}
 
-            <HStack className="items-center gap-1">
-              <span>Model</span>
-              <ModelSelector
-                className="h-auto py-1 text-xs focus:ring-offset-0"
-                defaultValue={model}
-                onChangeValue={(newModel) => {
-                  setModel(newModel)
-                  if (input) {
-                    fetcher.submit(
-                      { model: newModel, source: input },
-                      { method: 'POST' },
-                    )
-                  }
-                }}
-              />
-            </HStack>
-          </HStack>
-        </HStack>
+          {/* model  */}
+          <FooterMenuItem>
+            <span>Model</span>
+            <ModelSelector
+              value={model}
+              onChangeValue={(newModel) => {
+                setModel(newModel)
+                if (input) {
+                  fetcher.submit(
+                    { model: newModel, source: input },
+                    { method: 'POST' },
+                  )
+                }
+              }}
+            />
+          </FooterMenuItem>
+        </FooterMenu>
       </Stack>
     </fetcher.Form>
   )
