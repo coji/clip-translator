@@ -14,6 +14,7 @@ import {
   AlertDescription,
   AlertTitle,
   Badge,
+  Button,
   Spinner,
   Stack,
   Textarea,
@@ -23,11 +24,13 @@ import { cn } from '~/libs/utils'
 import { Models } from '~/services/claude3'
 import { requireApiKey, saveConfig } from '~/services/config.client'
 import {
+  DistinationPane,
   FooterMenu,
   FooterMenuItem,
   FooterSpacer,
   IndexLayout,
   ModelSelect,
+  SourcePane,
   TranslationPane,
 } from './components'
 import { translate } from './functions'
@@ -79,23 +82,29 @@ export default function IndexPage() {
     <IndexLayout asChild>
       <fetcher.Form method="POST">
         <TranslationPane key={source}>
-          {/* source text */}
-          <Textarea
-            placeholder="Enter a source text..."
-            name="source"
-            defaultValue={source}
-            onChange={(e) => setInput(e.target.value)}
-          />
+          <SourcePane>
+            {/* source text */}
+            <Textarea
+              placeholder="Enter a source text..."
+              name="source"
+              defaultValue={source}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </SourcePane>
 
-          {/* translated text */}
-          <div className="relative grid grid-cols-1 place-items-center">
-            <Stack className="absolute inset-0 mt-0.5 overflow-auto rounded bg-background p-2">
+          <DistinationPane className="relative">
+            <Stack className="absolute inset-0">
               <ReactMarkdown
                 className={cn(
+                  'flex-1 overflow-auto rounded bg-background p-2',
                   isSubmitting && 'bg-slate-50 text-muted-foreground',
                 )}
               >
-                {`${actionData?.type === 'success' ? actionData.destinationText : ''}${isSubmitting ? '...' : ''}`}
+                {`${
+                  actionData?.type === 'success'
+                    ? actionData.destinationText
+                    : ''
+                }${isSubmitting ? '...' : ''}`}
               </ReactMarkdown>
 
               {actionData?.type === 'error' && (
@@ -112,15 +121,15 @@ export default function IndexPage() {
               className="absolute inset-0 z-10 m-auto"
               show={isSubmitting}
             />
-          </div>
+          </DistinationPane>
         </TranslationPane>
 
         <FooterMenu>
           {/* config */}
-          <FooterMenuItem asChild>
-            <Link to="/config" className=" text-primary underline">
-              Config
-            </Link>
+          <FooterMenuItem>
+            <Button variant="link" size="xs" asChild>
+              <Link to="/config">Config</Link>
+            </Button>
           </FooterMenuItem>
 
           <FooterSpacer />
