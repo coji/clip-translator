@@ -65,6 +65,9 @@ dependencies:
   remix-routes:
     specifier: ^1.7.2
     version: 1.7.2
+  sonner:
+    specifier: ^1.4.41
+    version: 1.4.41(react-dom@18.3.0-canary-a4939017f-20240320)(react@18.3.0-canary-a4939017f-20240320)
   tailwind-merge:
     specifier: ^2.2.2
     version: 2.2.2
@@ -7032,6 +7035,16 @@ packages:
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
+    dev: false
+
+  /sonner@1.4.41(react-dom@18.3.0-canary-a4939017f-20240320)(react@18.3.0-canary-a4939017f-20240320):
+    resolution: {integrity: sha512-uG511ggnnsw6gcn/X+YKkWPo5ep9il9wYi3QJxHsYe7yTZ4+cOd1wuodOUmOpFuXL+/RE3R04LczdNCDygTDgQ==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      react: 18.3.0-canary-a4939017f-20240320
+      react-dom: 18.3.0-canary-a4939017f-20240320(react@18.3.0-canary-a4939017f-20240320)
     dev: false
 
   /source-map-js@1.2.0:

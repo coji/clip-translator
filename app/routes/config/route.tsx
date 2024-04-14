@@ -17,6 +17,7 @@ import {
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
 import { $path } from 'remix-routes'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import {
   Button,
@@ -59,6 +60,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   }
 
   await saveConfig(submission.value)
+  toast.success('Configurations saved successfully')
 
   return redirect($path('/'))
 }

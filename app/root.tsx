@@ -5,6 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
+import { Toaster } from '~/components/ui'
 import { useGlobalShortcut } from './services/global-shortcut.client'
 import './styles/globals.css'
 
@@ -23,6 +24,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       </head>
       <body>
         {children}
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
       </body>
