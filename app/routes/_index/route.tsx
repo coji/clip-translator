@@ -83,7 +83,6 @@ export default function IndexPage() {
       <fetcher.Form method="POST">
         <TranslationPane key={source}>
           <SourcePane>
-            {/* source text */}
             <Textarea
               placeholder="Enter a source text..."
               name="source"
@@ -125,7 +124,6 @@ export default function IndexPage() {
         </TranslationPane>
 
         <FooterMenu>
-          {/* config */}
           <FooterMenuItem>
             <Button variant="link" size="xs" asChild>
               <Link to="/config">Config</Link>
@@ -134,7 +132,6 @@ export default function IndexPage() {
 
           <FooterSpacer />
 
-          {/* cost */}
           {actionData?.type === 'success' && (
             <FooterMenuItem>
               <span className="whitespace-nowrap">LLMコスト</span>
@@ -144,7 +141,6 @@ export default function IndexPage() {
             </FooterMenuItem>
           )}
 
-          {/* model  */}
           <FooterMenuItem>
             <span>Model</span>
             <ModelSelect
