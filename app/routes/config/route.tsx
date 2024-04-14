@@ -3,6 +3,7 @@ import {
   getInputProps,
   getTextareaProps,
   useForm,
+  useInputControl,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
@@ -77,114 +78,123 @@ export default function ConfigPage() {
     ({ currentLocation, nextLocation }) =>
       form.dirty && currentLocation.pathname !== nextLocation.pathname,
   )
+  const modelControl = useInputControl(fields.model)
 
   return (
-    <ConfigPageLayout>
-      <Form method="POST" {...getFormProps(form)} />
+    <ConfigPageLayout asChild>
+      <Form method="POST" {...getFormProps(form)}>
+        <ConfigHeader>
+          <ConfigTitle>Configurations</ConfigTitle>
+        </ConfigHeader>
 
-      <ConfigHeader>
-        <ConfigTitle>Configurations</ConfigTitle>
-      </ConfigHeader>
-
-      <ConfigContent>
-        {/* anthropic  */}
-        <ConfigField>
-          <Label htmlFor={fields.anthropic_api_key.id}>Anthropic API Key</Label>
-          <Input
-            {...getInputProps(fields.anthropic_api_key, {
-              type: 'password',
-            })}
-          />
-          <div
-            id={fields.anthropic_api_key.errorId}
-            className="text-sm text-destructive"
-          >
-            {fields.anthropic_api_key.errors}
-          </div>
-        </ConfigField>
-
-        <ConfigField>
-          <Label htmlFor={fields.model.id}>Model</Label>
-          <Select defaultValue={fields.model.initialValue}>
-            <SelectTrigger
-              id={fields.model.id}
-              name={fields.model.name}
-              className="capitalize"
+        <ConfigContent>
+          {/* anthropic  */}
+          <ConfigField>
+            <Label htmlFor={fields.anthropic_api_key.id}>
+              Anthropic API Key
+            </Label>
+            <Input
+              {...getInputProps(fields.anthropic_api_key, {
+                type: 'password',
+              })}
+            />
+            <div
+              id={fields.anthropic_api_key.errorId}
+              className="text-sm text-destructive"
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(Models).map((modelId) => (
-                <SelectItem
-                  key={modelId}
-                  value={modelId}
-                  className="capitalize"
-                >
-                  {modelId}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div id={fields.model.errorId} className="text-sm text-destructive">
-            {fields.model.errors}
-          </div>
-        </ConfigField>
+              {fields.anthropic_api_key.errors}
+            </div>
+          </ConfigField>
 
-        <ConfigField className="flex-1">
-          <Label
-            className="block"
-            id={fields.system_prompt.descriptionId}
-            htmlFor={fields.system_prompt.id}
-          >
-            System Prompt
-          </Label>
-          <Textarea
-            className="flex-1"
-            {...getTextareaProps(fields.system_prompt)}
-          />
-          <div
-            id={fields.system_prompt.errorId}
-            className="text-sm text-destructive"
-          >
-            {fields.system_prompt.errors}
-          </div>
-        </ConfigField>
-      </ConfigContent>
+          <ConfigField>
+            <Label htmlFor={fields.model.id}>Model</Label>
+            <Select
+              defaultValue={fields.model.initialValue}
+              onValueChange={modelControl.change}
+              onOpenChange={(open) => {
+                if (!open) modelControl.blur()
+              }}
+            >
+              <SelectTrigger
+                name={fields.model.name}
+                id={fields.model.id}
+                className="capitalize"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(Models).map((modelId) => (
+                  <SelectItem
+                    key={modelId}
+                    value={modelId}
+                    className="capitalize"
+                  >
+                    {modelId}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div id={fields.model.errorId} className="text-sm text-destructive">
+              {fields.model.errors}
+            </div>
+          </ConfigField>
 
-      <ConfigFooter>
-        <Button type="button" variant="ghost" asChild>
-          <Link to={$path('/')}>Cancel</Link>
-        </Button>
-        <Button type="submit" form={form.id} disabled={!form.dirty}>
-          Save
-        </Button>
-      </ConfigFooter>
+          <ConfigField className="flex-1">
+            <Label
+              className="block"
+              id={fields.system_prompt.descriptionId}
+              htmlFor={fields.system_prompt.id}
+            >
+              System Prompt
+            </Label>
+            <Textarea
+              className="flex-1"
+              {...getTextareaProps(fields.system_prompt)}
+            />
+            <div
+              id={fields.system_prompt.errorId}
+              className="text-sm text-destructive"
+            >
+              {fields.system_prompt.errors}
+            </div>
+          </ConfigField>
+        </ConfigContent>
 
-      {blocker.state === 'blocked' && (
-        <BlockerAlert>
-          <div className="flex-1">
-            Are you sure you want to leave without saving?
-          </div>
-
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => blocker.reset()}
-          >
-            Stay
+        <ConfigFooter>
+          <Button type="button" variant="ghost" asChild>
+            <Link to={$path('/')}>Cancel</Link>
           </Button>
-
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => blocker.proceed()}
-          >
-            Continue
+          <Button type="submit" disabled={!form.dirty}>
+            Save
           </Button>
-        </BlockerAlert>
-      )}
+        </ConfigFooter>
+
+        {blocker.state === 'blocked' && (
+          <BlockerAlert>
+            <div className="flex-1">
+              Are you sure you want to leave without saving?
+            </div>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => blocker.reset()}
+            >
+              Stay
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => blocker.proceed()}
+            >
+              Continue
+            </Button>
+          </BlockerAlert>
+        )}
+      </Form>
     </ConfigPageLayout>
   )
 }
