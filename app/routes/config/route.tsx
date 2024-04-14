@@ -20,7 +20,6 @@ import { $path } from 'remix-routes'
 import { z } from 'zod'
 import {
   Button,
-  HStack,
   Input,
   Label,
   Select,
@@ -28,11 +27,19 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Stack,
   Textarea,
 } from '~/components/ui'
 import { ModelIdSchema, Models } from '~/services/claude3'
 import { loadConfig, saveConfig } from '~/services/config.client'
+import {
+  BlockerAlert,
+  ConfigContent,
+  ConfigField,
+  ConfigFooter,
+  ConfigHeader,
+  ConfigPageLayout,
+  ConfigTitle,
+} from './components/Layout'
 
 const schema = z.object({
   anthropic_api_key: z.string().max(200),
@@ -53,7 +60,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
 
   await saveConfig(submission.value)
 
-  return redirect('/')
+  return redirect($path('/'))
 }
 
 export default function ConfigPage() {
@@ -76,50 +83,31 @@ export default function ConfigPage() {
   )
 
   return (
-    <div className="flex h-screen flex-col">
-      <Stack className="flex-1 gap-2  p-2" asChild>
-        <Form method="POST" {...getFormProps(form)}>
-          <h1 className="text-2xl font-bold">Configurations</h1>
-          <div>{fields.model.valid}</div>
-          <Stack className="flex-1">
-            {/* anthropic  */}
-            <div>
-              <Label htmlFor={fields.anthropic_api_key.id}>
-                Anthropic API Key
-              </Label>
-              <Input
-                {...getInputProps(fields.anthropic_api_key, {
-                  type: 'password',
-                })}
-              />
-              <div
-                className="text-destructive"
-                id={fields.anthropic_api_key.errorId}
-              >
-                {fields.anthropic_api_key.errors}
-              </div>
-            </div>
+    <ConfigPageLayout>
+      <Form method="POST" {...getFormProps(form)} />
 
-            {/* system prompt */}
-            <div className="flex flex-1 flex-col gap-1">
-              <Label className="block" htmlFor={fields.system_prompt.id}>
-                System Prompt
-              </Label>
-              <Textarea
-                className="flex-1"
-                {...getTextareaProps(fields.system_prompt)}
-              />
+      <ConfigHeader>
+        <ConfigTitle>Configurations</ConfigTitle>
+      </ConfigHeader>
 
-              <div
-                className="text-destructive"
-                id={fields.system_prompt.errorId}
-              >
-                {fields.system_prompt.errors}
-              </div>
-            </div>
-          </Stack>
+      <ConfigContent>
+        {/* anthropic  */}
+        <ConfigField>
+          <Label htmlFor={fields.anthropic_api_key.id}>Anthropic API Key</Label>
+          <Input
+            {...getInputProps(fields.anthropic_api_key, {
+              type: 'password',
+            })}
+          />
+          <div
+            className="text-destructive"
+            id={fields.anthropic_api_key.errorId}
+          >
+            {fields.anthropic_api_key.errors}
+          </div>
+        </ConfigField>
 
-          {/* model */}
+        <ConfigField>
           <Label htmlFor={fields.model.id}>Model</Label>
           <Select
             defaultValue={fields.model.initialValue}
@@ -150,23 +138,47 @@ export default function ConfigPage() {
           <div id={fields.model.errorId} className="text-destructive">
             {fields.model.errors}
           </div>
+        </ConfigField>
 
-          <HStack>
-            <Button className="w-full" variant="ghost" asChild>
-              <Link to={$path('/')}>Cancel</Link>
-            </Button>
-            <Button className="w-full" disabled={!form.dirty}>
-              Save
-            </Button>
-          </HStack>
-        </Form>
-      </Stack>
+        <ConfigField className="flex-1">
+          <Label className="block" htmlFor={fields.system_prompt.id}>
+            System Prompt
+          </Label>
+          <Textarea
+            className="flex-1"
+            {...getTextareaProps(fields.system_prompt)}
+          />
+
+          <div className="text-destructive" id={fields.system_prompt.errorId}>
+            {fields.system_prompt.errors}
+          </div>
+        </ConfigField>
+      </ConfigContent>
+
+      <ConfigFooter>
+        <Button form={form.id} variant="ghost" asChild>
+          <Link to={$path('/')}>Cancel</Link>
+        </Button>
+        <Button form={form.id} disabled={!form.dirty}>
+          Save
+        </Button>
+      </ConfigFooter>
 
       {blocker.state === 'blocked' && (
-        <HStack className="bg-primary px-4 py-2 text-primary-foreground">
+        <BlockerAlert>
           <div className="flex-1">
             Are you sure you want to leave without saving?
           </div>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => blocker.reset()}
+          >
+            Stay
+          </Button>
+
           <Button
             type="button"
             variant="secondary"
@@ -175,17 +187,8 @@ export default function ConfigPage() {
           >
             Continue
           </Button>
-
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => blocker.reset()}
-          >
-            Stay
-          </Button>
-        </HStack>
+        </BlockerAlert>
       )}
-    </div>
+    </ConfigPageLayout>
   )
 }
