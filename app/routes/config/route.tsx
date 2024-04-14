@@ -3,7 +3,6 @@ import {
   getInputProps,
   getTextareaProps,
   useForm,
-  useInputControl,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
@@ -70,15 +69,10 @@ export default function ConfigPage() {
   const lastResult = useActionData<typeof clientAction>()
   const [form, fields] = useForm({
     lastResult,
-    defaultValue: {
-      anthropic_api_key: config.anthropic_api_key,
-      system_prompt: config.system_prompt,
-      model: config.model,
-    },
+    defaultValue: { ...config },
     constraint: getZodConstraint(schema),
     onValidate: ({ formData }) => parseWithZod(formData, { schema }),
   })
-  const modelControl = useInputControl(fields.model)
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       form.dirty && currentLocation.pathname !== nextLocation.pathname,
@@ -102,8 +96,8 @@ export default function ConfigPage() {
             })}
           />
           <div
-            className="text-destructive"
             id={fields.anthropic_api_key.errorId}
+            className="text-sm text-destructive"
           >
             {fields.anthropic_api_key.errors}
           </div>
@@ -111,13 +105,7 @@ export default function ConfigPage() {
 
         <ConfigField>
           <Label htmlFor={fields.model.id}>Model</Label>
-          <Select
-            defaultValue={fields.model.initialValue}
-            onValueChange={modelControl.change}
-            onOpenChange={(open) => {
-              if (!open) modelControl.blur()
-            }}
-          >
+          <Select defaultValue={fields.model.initialValue}>
             <SelectTrigger
               id={fields.model.id}
               name={fields.model.name}
@@ -137,31 +125,37 @@ export default function ConfigPage() {
               ))}
             </SelectContent>
           </Select>
-          <div id={fields.model.errorId} className="text-destructive">
+          <div id={fields.model.errorId} className="text-sm text-destructive">
             {fields.model.errors}
           </div>
         </ConfigField>
 
         <ConfigField className="flex-1">
-          <Label className="block" htmlFor={fields.system_prompt.id}>
+          <Label
+            className="block"
+            id={fields.system_prompt.descriptionId}
+            htmlFor={fields.system_prompt.id}
+          >
             System Prompt
           </Label>
           <Textarea
             className="flex-1"
             {...getTextareaProps(fields.system_prompt)}
           />
-
-          <div className="text-destructive" id={fields.system_prompt.errorId}>
+          <div
+            id={fields.system_prompt.errorId}
+            className="text-sm text-destructive"
+          >
             {fields.system_prompt.errors}
           </div>
         </ConfigField>
       </ConfigContent>
 
       <ConfigFooter>
-        <Button form={form.id} variant="ghost" asChild>
+        <Button type="button" variant="ghost" asChild>
           <Link to={$path('/')}>Cancel</Link>
         </Button>
-        <Button form={form.id} disabled={!form.dirty}>
+        <Button type="submit" form={form.id} disabled={!form.dirty}>
           Save
         </Button>
       </ConfigFooter>
