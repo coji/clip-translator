@@ -7,6 +7,7 @@ import {
 } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { $path } from 'remix-routes'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import {
@@ -126,7 +127,7 @@ export default function IndexPage() {
         <FooterMenu>
           <FooterMenuItem>
             <Button variant="link" size="xs" asChild>
-              <Link to="/config">Config</Link>
+              <Link to={$path('/config')}>Config</Link>
             </Button>
           </FooterMenuItem>
 
