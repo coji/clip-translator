@@ -2,7 +2,11 @@ import type { Anthropic } from '@anthropic-ai/sdk'
 import { Body, fetch } from '@tauri-apps/api/http'
 import { z } from 'zod'
 
-export const ModelIdSchema = z.enum(['opus', 'sonnet', 'haiku'])
+export const ModelIdSchema = z.enum([
+  'Claude3 Opus',
+  'Claude3 Sonnet',
+  'Claude3 Haiku',
+])
 export const ModelSchema = z.enum([
   'claude-3-opus-20240229',
   'claude-3-sonnet-20240229',
@@ -13,9 +17,9 @@ export const Models: Record<
   z.infer<typeof ModelIdSchema>,
   z.infer<typeof ModelSchema>
 > = {
-  opus: 'claude-3-opus-20240229' as const,
-  sonnet: 'claude-3-sonnet-20240229' as const,
-  haiku: 'claude-3-haiku-20240307' as const,
+  'Claude3 Opus': 'claude-3-opus-20240229' as const,
+  'Claude3 Sonnet': 'claude-3-sonnet-20240229' as const,
+  'Claude3 Haiku': 'claude-3-haiku-20240307' as const,
 } as const
 export type Claude3Models = z.infer<typeof ModelSchema>
 

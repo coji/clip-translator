@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { $path } from 'remix-routes'
+import { match } from 'ts-pattern'
 import { z } from 'zod'
 import { zx } from 'zodix'
 import {
@@ -22,8 +23,8 @@ import {
 } from '~/components/ui'
 import { useDebounce } from '~/hooks/useDebounce'
 import { cn } from '~/libs/utils'
-import { Models } from '~/services/claude3'
 import { requireApiKey, saveConfig } from '~/services/config.client'
+import { ModelIdSchema, Models } from '~/services/models'
 import {
   DistinationPane,
   FooterMenu,
@@ -34,7 +35,7 @@ import {
   SourcePane,
   TranslationPane,
 } from './components'
-import { translate } from './functions'
+import { translateByClaude3, translateByGemini } from './functions'
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
@@ -45,18 +46,39 @@ export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const config = await requireApiKey()
   const { model, source } = await zx.parseForm(request, {
-    model: z.enum(['opus', 'sonnet', 'haiku']),
+    model: ModelIdSchema,
     source: z.string(),
   })
 
   await saveConfig({ ...config, model })
 
-  return await translate({
-    apiKey: config.anthropic_api_key,
-    systemPrompt: config.system_prompt,
-    model: Models[model],
-    source: source,
-  })
+  return match(Models[model])
+    .with({ provider: 'claude3' }, (model) =>
+      translateByClaude3({
+        apiKey: config.anthropic_api_key,
+        systemPrompt: config.system_prompt,
+        model: model.id,
+        source,
+      }),
+    )
+    .with({ provider: 'gemini' }, (model) => {
+      if (!config.gemini_api_key) {
+        return {
+          type: 'error',
+          destinationText: '',
+          cost: 0,
+          error: 'Gemini API key is required.',
+        }
+      }
+
+      return translateByGemini({
+        apiKey: config.gemini_api_key,
+        systemPrompt: config.system_prompt,
+        source,
+        model: model.id,
+      })
+    })
+    .exhaustive()
 }
 
 export default function IndexPage() {

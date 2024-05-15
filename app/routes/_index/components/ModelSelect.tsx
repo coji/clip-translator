@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from '~/components/ui'
 import { cn } from '~/libs/utils'
-import { Models } from '~/services/claude3'
+import { Models } from '~/services/models'
 
 interface ModelSelectorProps
   extends React.ComponentProps<typeof SelectTrigger> {

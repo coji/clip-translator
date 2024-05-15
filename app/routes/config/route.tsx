@@ -30,8 +30,8 @@ import {
   SelectValue,
   Textarea,
 } from '~/components/ui'
-import { ModelIdSchema, Models } from '~/services/claude3'
 import { loadConfig, saveConfig } from '~/services/config.client'
+import { ModelIdSchema, Models } from '~/services/models'
 import {
   BlockerAlert,
   ConfigContent,
@@ -44,6 +44,7 @@ import {
 
 const schema = z.object({
   anthropic_api_key: z.string().max(200),
+  gemini_api_key: z.string().max(200),
   system_prompt: z.string().max(100000),
   model: ModelIdSchema,
 })
@@ -59,6 +60,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     return submission.reply()
   }
 
+  console.log(submission.value)
   await saveConfig(submission.value)
   toast.success('Configurations saved successfully')
 
@@ -102,6 +104,15 @@ export default function ConfigPage() {
           >
             {fields.anthropic_api_key.errors}
           </div>
+        </ConfigField>
+
+        <ConfigField>
+          <Label htmlFor={fields.gemini_api_key.id}>Gemini API Key</Label>
+          <Input
+            {...getInputProps(fields.gemini_api_key, {
+              type: 'password',
+            })}
+          />
         </ConfigField>
 
         <ConfigField>

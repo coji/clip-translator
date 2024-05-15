@@ -1,6 +1,6 @@
 import { StructuredOutputParser } from 'langchain/output_parsers'
 import { z } from 'zod'
-import { calcTokenCostUSD, callClaude3 } from '~/services/claude3'
+import { calcTokenCostUSD, callClaude3 } from '~/services/models/claude3'
 
 interface TranslateSuccess {
   type: 'success'
@@ -23,7 +23,7 @@ interface TranslateProps {
   model: Claude3Model
   source: string
 }
-export const translate = async ({
+export const translateByClaude3 = async ({
   apiKey,
   systemPrompt,
   model,

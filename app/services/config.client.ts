@@ -34,6 +34,7 @@ const ConfigSchema = z.object({
     .string()
     .optional()
     .default(defaultConfig.anthropic_api_key),
+  gemini_api_key: z.string().optional(),
   system_prompt: z.string().optional().default(defaultConfig.system_prompt),
   model: z.string().optional().default(defaultConfig.model),
 })
@@ -65,5 +66,5 @@ export const requireApiKey = async () => {
 
 export const saveConfig = async (config: Config) => {
   const configPath = await getConfigPath()
-  await fs.writeTextFile(configPath, JSON.stringify(config))
+  await fs.writeTextFile(configPath, JSON.stringify(config, null, 2))
 }
