@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, type UsageMetadata } from '@google/generative-ai'
+import { match } from 'ts-pattern'
 import { z } from 'zod'
 
 export const ModelIdSchema = z.enum(['Gemini 1.5 Flash', 'Gemini 1.5 Pro'])
@@ -49,27 +50,29 @@ export const callGemini = async ({
   }
 }
 
-const inputModelCostMap: Record<GeminiModels, number> = {
-  'gemini-1.5-flash-latest': 0.35, // $0.35
-  'models/gemini-1.5-pro-latest': 3.5, // $3.50
-}
-
-const outputModelCostMap: Record<GeminiModels, number> = {
-  'gemini-1.5-flash-latest': 0.53, // $0.50
-  'models/gemini-1.5-pro-latest': 21, // $21.00
-}
-
 export const calcTokenCostUSD = (model: GeminiModels, usage: UsageMetadata) => {
-  const inputCost =
-    (usage.promptTokenCount / 1000000) * inputModelCostMap[model]
-  const outputCost =
-    (usage.candidatesTokenCount / 1000000) * outputModelCostMap[model]
-  console.log({
-    usage,
-    inputModelCost: inputModelCostMap[model],
-    outputModelCost: outputModelCostMap[model],
-    inputCost,
-    outputCost,
-  })
-  return inputCost + outputCost
+  return match(model)
+    .with('gemini-1.5-flash-latest', () => {
+      if (usage.promptTokenCount < 128 * 1000) {
+        const promptTokenCost = (usage.promptTokenCount / 1000000) * 0.35
+        const candidatesTokenCost =
+          (usage.candidatesTokenCount / 1000000) * 0.53
+        return promptTokenCost + candidatesTokenCost
+      }
+      const promptTokenCost = (usage.promptTokenCount / 1000000) * 0.7
+      const candidatesTokenCost = (usage.candidatesTokenCount / 1000000) * 1.05
+      return promptTokenCost + candidatesTokenCost
+    })
+    .with('models/gemini-1.5-pro-latest', () => {
+      if (usage.promptTokenCount < 128 * 1000) {
+        const promptTokenCost = (usage.promptTokenCount / 1000000) * 3.5
+        const candidatesTokenCost =
+          (usage.candidatesTokenCount / 1000000) * 10.5
+        return promptTokenCost + candidatesTokenCost
+      }
+      const promptTokenCost = (usage.promptTokenCount / 1000000) * 7
+      const candidatesTokenCost = (usage.candidatesTokenCount / 1000000) * 21
+      return promptTokenCost + candidatesTokenCost
+    })
+    .exhaustive()
 }

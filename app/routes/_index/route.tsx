@@ -6,7 +6,6 @@ import {
   type ClientLoaderFunctionArgs,
 } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { $path } from 'remix-routes'
 import { match } from 'ts-pattern'
 import { z } from 'zod'
@@ -52,16 +51,19 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
 
   await saveConfig({ ...config, model })
 
-  return match(Models[model])
-    .with({ provider: 'claude3' }, (model) =>
-      translateByClaude3({
-        apiKey: config.anthropic_api_key,
-        systemPrompt: config.system_prompt,
-        model: model.id,
-        source,
-      }),
+  const startTime = Date.now()
+  const response = await match(Models[model])
+    .with(
+      { provider: 'claude3' },
+      async (model) =>
+        await translateByClaude3({
+          apiKey: config.anthropic_api_key,
+          systemPrompt: config.system_prompt,
+          model: model.id,
+          source,
+        }),
     )
-    .with({ provider: 'gemini' }, (model) => {
+    .with({ provider: 'gemini' }, async (model) => {
       if (!config.gemini_api_key) {
         return {
           type: 'error',
@@ -71,7 +73,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
         }
       }
 
-      return translateByGemini({
+      return await translateByGemini({
         apiKey: config.gemini_api_key,
         systemPrompt: config.system_prompt,
         source,
@@ -79,6 +81,9 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
       })
     })
     .exhaustive()
+  const finishTime = Date.now()
+
+  return { response, duration: finishTime - startTime }
 }
 
 export default function IndexPage() {
@@ -116,24 +121,24 @@ export default function IndexPage() {
 
           <DistinationPane className="relative">
             <Stack className="absolute inset-0">
-              <ReactMarkdown
+              <Textarea
+                readOnly
                 className={cn(
-                  'flex-1 overflow-auto rounded bg-background p-2',
+                  'flex-1 p-2',
                   isSubmitting && 'bg-slate-50 text-muted-foreground',
                 )}
-              >
-                {`${
-                  actionData?.type === 'success'
-                    ? actionData.destinationText
+                value={`${
+                  actionData?.response.type === 'success'
+                    ? actionData.response.destinationText
                     : ''
                 }${isSubmitting ? '...' : ''}`}
-              </ReactMarkdown>
+              />
 
-              {actionData?.type === 'error' && (
+              {actionData?.response.type === 'error' && (
                 <Alert variant="destructive">
                   <AlertTitle>System Error</AlertTitle>
                   <AlertDescription className="line-clamp-3">
-                    {actionData.error}
+                    {actionData?.response.error}
                   </AlertDescription>
                 </Alert>
               )}
@@ -155,13 +160,23 @@ export default function IndexPage() {
 
           <FooterSpacer />
 
-          {actionData?.type === 'success' && (
-            <FooterMenuItem>
-              <span className="whitespace-nowrap">LLMコスト</span>
-              <Badge className="whitespace-nowrap py-0">
-                {(actionData?.cost * 151).toFixed(2)} <small>円</small>
-              </Badge>
-            </FooterMenuItem>
+          {actionData?.response.type === 'success' && (
+            <>
+              <FooterMenuItem>
+                <span className="whitespace-nowrap">処理時間</span>
+                <Badge variant="destructive" className="whitespace-nowrap py-0">
+                  {Math.trunc(actionData.duration / 1000)} <small>秒</small>
+                </Badge>
+              </FooterMenuItem>
+
+              <FooterMenuItem>
+                <span className="whitespace-nowrap">LLMコスト</span>
+                <Badge className="whitespace-nowrap py-0">
+                  {(actionData?.response.cost * 155).toFixed(2)}{' '}
+                  <small>円</small>
+                </Badge>
+              </FooterMenuItem>
+            </>
           )}
 
           <FooterMenuItem>

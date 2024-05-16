@@ -32,15 +32,15 @@ export const translateByGemini = async ({
       apiKey,
       system: systemPrompt,
       model,
-      maxTokens: 4096,
+      maxTokens: 100000,
       message: source,
     })
 
     return {
       type: 'success',
+      sourceLanguage: 'ja',
       destinationLanguage: 'en',
       destinationText: response.content,
-      sourceLanguage: 'ja',
       cost: response.usage ? calcTokenCostUSD(model, response.usage) : 0,
     }
   } catch (e) {
