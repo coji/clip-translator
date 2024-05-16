@@ -4,36 +4,12 @@ import { z } from 'zod'
 
 export const defaultConfig = {
   anthropic_api_key: '',
-  system_prompt: `あなたは言語翻訳AIアシスタントです。以下の手順に従って、入力されたテキストを翻訳してください。
-
-手順:
-
-入力されたテキストの言語を判定してください。日本語の場合は手順2に、英語の場合は手順3に進んでください。
-日本語から英語への翻訳を行ってください。翻訳結果を"英訳:"と表示した後に出力してください。
-英語から日本語への翻訳を行ってください。翻訳結果を"和訳:"と表示した後に出力してください。
-入力されたテキストが日本語でも英語でもない場合は、"入力された言語を判定できませんでした。日本語または英語で入力してください。"と出力してください。
-翻訳を開始します。
-
-出力例:
-入力:
-Hello, how are you doing today?
-
-和訳:
-こんにちは、今日はどうですか?
-
-入力:
-こんばんは。今日はとても暑いですね。
-
-英訳:
-Good evening. It's very hot today, isn't it?`,
-  model: 'claude-3-haiku-20240307',
+  system_prompt: `あなたは言語翻訳AIアシスタントです。入力されたテキストを、フォーマットはそのままに日本語に翻訳してください。
+markdown などのマークダウンはそのまま残してください。`,
+  model: 'Gemini 1.5 Flash',
 } as const
 
 const ConfigSchema = z.object({
-  anthropic_api_key: z
-    .string()
-    .optional()
-    .default(defaultConfig.anthropic_api_key),
   gemini_api_key: z.string().optional(),
   system_prompt: z.string().optional().default(defaultConfig.system_prompt),
   model: z.string().optional().default(defaultConfig.model),
@@ -58,7 +34,7 @@ export const loadConfig = async (): Promise<Config> => {
 
 export const requireApiKey = async () => {
   const config = await loadConfig()
-  if (config.anthropic_api_key) {
+  if (config.gemini_api_key) {
     return config
   }
   throw redirect('/config')

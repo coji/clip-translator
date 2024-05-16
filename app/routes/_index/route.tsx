@@ -34,7 +34,7 @@ import {
   SourcePane,
   TranslationPane,
 } from './components'
-import { translateByClaude3, translateByGemini } from './functions'
+import { translateByGemini } from './functions'
 
 export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
@@ -53,16 +53,6 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
 
   const startTime = Date.now()
   const response = await match(Models[model])
-    .with(
-      { provider: 'claude3' },
-      async (model) =>
-        await translateByClaude3({
-          apiKey: config.anthropic_api_key,
-          systemPrompt: config.system_prompt,
-          model: model.id,
-          source,
-        }),
-    )
     .with({ provider: 'gemini' }, async (model) => {
       if (!config.gemini_api_key) {
         return {

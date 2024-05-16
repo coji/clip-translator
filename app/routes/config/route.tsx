@@ -43,7 +43,6 @@ import {
 } from './components/Layout'
 
 const schema = z.object({
-  anthropic_api_key: z.string().max(200),
   gemini_api_key: z.string().max(200),
   system_prompt: z.string().max(100000),
   model: ModelIdSchema,
@@ -90,22 +89,6 @@ export default function ConfigPage() {
       </ConfigHeader>
 
       <ConfigContent>
-        {/* anthropic  */}
-        <ConfigField>
-          <Label htmlFor={fields.anthropic_api_key.id}>Anthropic API Key</Label>
-          <Input
-            {...getInputProps(fields.anthropic_api_key, {
-              type: 'password',
-            })}
-          />
-          <div
-            id={fields.anthropic_api_key.errorId}
-            className="text-sm text-destructive"
-          >
-            {fields.anthropic_api_key.errors}
-          </div>
-        </ConfigField>
-
         <ConfigField>
           <Label htmlFor={fields.gemini_api_key.id}>Gemini API Key</Label>
           <Input
