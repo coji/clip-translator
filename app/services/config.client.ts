@@ -35,7 +35,7 @@ export const loadConfig = async (): Promise<Config> => {
 export const requireApiKey = async () => {
   const config = await loadConfig()
   if (config.gemini_api_key) {
-    return config
+    return config as Required<Config>
   }
   throw redirect('/config')
 }

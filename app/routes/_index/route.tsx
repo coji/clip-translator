@@ -54,15 +54,6 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const startTime = Date.now()
   const response = await match(Models[model])
     .with({ provider: 'gemini' }, async (model) => {
-      if (!config.gemini_api_key) {
-        return {
-          type: 'error',
-          destinationText: '',
-          cost: 0,
-          error: 'Gemini API key is required.',
-        }
-      }
-
       return await translateByGemini({
         apiKey: config.gemini_api_key,
         systemPrompt: config.system_prompt,
@@ -158,6 +149,25 @@ export default function IndexPage() {
                   {Math.trunc(actionData.duration / 1000)} <small>秒</small>
                 </Badge>
               </FooterMenuItem>
+
+              {actionData.response.inputTokens && (
+                <FooterMenuItem>
+                  <span className="whitespace-nowrap">入力</span>
+                  <Badge variant="secondary" className="whitespace-nowrap py-0">
+                    {actionData.response.inputTokens.toLocaleString()}
+                    <small>トークン</small>
+                  </Badge>
+                </FooterMenuItem>
+              )}
+              {actionData.response.outputTokens && (
+                <FooterMenuItem>
+                  <span className="whitespace-nowrap">出力</span>
+                  <Badge variant="secondary" className="whitespace-nowrap py-0">
+                    {actionData.response.outputTokens.toLocaleString()}
+                    <small>トークン</small>
+                  </Badge>
+                </FooterMenuItem>
+              )}
 
               <FooterMenuItem>
                 <span className="whitespace-nowrap">LLMコスト</span>

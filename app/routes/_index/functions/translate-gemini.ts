@@ -5,6 +5,8 @@ interface TranslateSuccess {
   sourceLanguage: string
   destinationLanguage: string
   destinationText: string
+  inputTokens?: number
+  outputTokens?: number
   cost: number
 }
 
@@ -41,6 +43,8 @@ export const translateByGemini = async ({
       sourceLanguage: 'ja',
       destinationLanguage: 'en',
       destinationText: response.content,
+      inputTokens: response.usage?.promptTokenCount,
+      outputTokens: response.usage?.candidatesTokenCount,
       cost: response.usage ? calcTokenCostUSD(model, response.usage) : 0,
     }
   } catch (e) {
