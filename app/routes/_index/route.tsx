@@ -93,6 +93,7 @@ export default function IndexPage() {
         <TranslationPane key={source}>
           <SourcePane>
             <Textarea
+              className="p-2"
               placeholder="Enter a source text..."
               name="source"
               defaultValue={source}
@@ -159,6 +160,7 @@ export default function IndexPage() {
                   </Badge>
                 </FooterMenuItem>
               )}
+
               {actionData.response.outputTokens && (
                 <FooterMenuItem>
                   <span className="whitespace-nowrap">出力</span>
@@ -169,13 +171,15 @@ export default function IndexPage() {
                 </FooterMenuItem>
               )}
 
-              <FooterMenuItem>
-                <span className="whitespace-nowrap">LLMコスト</span>
-                <Badge className="whitespace-nowrap py-0">
-                  {(actionData?.response.cost * 155).toFixed(2)}{' '}
-                  <small>円</small>
-                </Badge>
-              </FooterMenuItem>
+              {actionData?.response.cost && (
+                <FooterMenuItem>
+                  <span className="whitespace-nowrap">LLMコスト</span>
+                  <Badge className="whitespace-nowrap py-0">
+                    {(actionData.response.cost * 155).toFixed(2)}{' '}
+                    <small>円</small>
+                  </Badge>
+                </FooterMenuItem>
+              )}
             </>
           )}
 

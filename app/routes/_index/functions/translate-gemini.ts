@@ -2,12 +2,10 @@ import { calcTokenCostUSD, callGemini } from '~/services/models/gemini'
 
 interface TranslateSuccess {
   type: 'success'
-  sourceLanguage: string
-  destinationLanguage: string
   destinationText: string
   inputTokens?: number
   outputTokens?: number
-  cost: number
+  cost?: number
 }
 
 interface TranslateError {
@@ -40,12 +38,10 @@ export const translateByGemini = async ({
 
     return {
       type: 'success',
-      sourceLanguage: 'ja',
-      destinationLanguage: 'en',
       destinationText: response.content,
       inputTokens: response.usage?.promptTokenCount,
       outputTokens: response.usage?.candidatesTokenCount,
-      cost: response.usage ? calcTokenCostUSD(model, response.usage) : 0,
+      cost: response.usage && calcTokenCostUSD(model, response.usage),
     }
   } catch (e) {
     let errorMessage = ''
