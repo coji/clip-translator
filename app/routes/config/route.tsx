@@ -15,7 +15,7 @@ import {
   useLoaderData,
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
-} from '@remix-run/react'
+} from 'react-router';
 import { $path } from 'remix-routes'
 import { toast } from 'sonner'
 import { z } from 'zod'

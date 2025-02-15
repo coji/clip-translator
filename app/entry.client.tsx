@@ -1,4 +1,4 @@
-import { RemixBrowser } from '@remix-run/react'
+import { HydratedRouter } from 'react-router/dom';
 import { StrictMode, startTransition } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { initNotification } from './services/notification.client'
@@ -9,7 +9,7 @@ startTransition(() => {
   hydrateRoot(
     document,
     <StrictMode>
-      <RemixBrowser />
+      <HydratedRouter />
     </StrictMode>,
   )
 })

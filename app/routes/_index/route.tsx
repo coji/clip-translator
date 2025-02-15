@@ -4,7 +4,7 @@ import {
   useLoaderData,
   type ClientActionFunctionArgs,
   type ClientLoaderFunctionArgs,
-} from '@remix-run/react'
+} from 'react-router';
 import { useEffect, useState } from 'react'
 import { $path } from 'remix-routes'
 import { match } from 'ts-pattern'
