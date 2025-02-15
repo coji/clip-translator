@@ -5,7 +5,21 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [remix({ ssr: false }), remixRoutes(), tsConfigPaths()],
+  plugins: [
+    remix({
+      ssr: false,
+      future: {
+        v3_fetcherPersist: true,
+        v3_lazyRouteDiscovery: true,
+        v3_relativeSplatPath: true,
+        v3_routeConfig: true,
+        v3_singleFetch: true,
+        v3_throwAbortReason: true,
+      },
+    }),
+    remixRoutes(),
+    tsConfigPaths(),
+  ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
