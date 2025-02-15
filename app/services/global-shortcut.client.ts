@@ -1,4 +1,4 @@
-import { useNavigate } from '@remix-run/react'
+import { useNavigate } from 'react-router';
 import { clipboard, window as tauri_window } from '@tauri-apps/api'
 import {
   isRegistered,

@@ -1,4 +1,4 @@
-import { redirect } from '@remix-run/react'
+import { redirect } from 'react-router';
 import { fs, path } from '@tauri-apps/api'
 import { z } from 'zod'
 
