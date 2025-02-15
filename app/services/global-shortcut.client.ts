@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router';
-import { clipboard, window as tauri_window } from '@tauri-apps/api'
+import {  webviewWindow } from '@tauri-apps/api'
 import {
   isRegistered,
   register,
   unregister,
-} from '@tauri-apps/api/globalShortcut'
+} from '@tauri-apps/plugin-global-shortcut'
 import { useEffect } from 'react'
 import { $path } from 'remix-routes'
 import { sendNotify } from './notification.client'
+import * as clipboard from "@tauri-apps/plugin-clipboard-manager"
 
 const registerShortcut = async (
   shortcut: string,
