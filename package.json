@@ -14,7 +14,6 @@
     "validate": "pnpm run lint && pnpm run format && pnpm run typecheck"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.36.3",
     "@conform-to/react": "^1.2.2",
     "@conform-to/zod": "^1.2.2",
     "@google/generative-ai": "^0.21.0",
@@ -29,7 +28,6 @@
     "isbot": "^5.1.22",
     "langchain": "^0.3.15",
     "lucide-react": "^0.475.0",
-    "openai": "^4.85.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-markdown": "^9.0.3",
