@@ -1,6 +1,7 @@
 import { redirect } from 'react-router';
-import { fs, path } from '@tauri-apps/api'
+import {  path } from '@tauri-apps/api'
 import { z } from 'zod'
+import * as fs from "@tauri-apps/plugin-fs"
 
 export const defaultConfig = {
   anthropic_api_key: '',

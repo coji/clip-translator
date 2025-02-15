@@ -3,7 +3,7 @@ import {
   requestPermission,
   sendNotification,
   type Options,
-} from '@tauri-apps/api/notification'
+} from '@tauri-apps/plugin-notification'
 
 export const initNotification = async () => {
   if (!(await isPermissionGranted())) {
