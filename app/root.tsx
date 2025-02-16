@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import { Toaster } from '~/components/ui'
 import { useGlobalShortcut } from './services/global-shortcut.client'
 import './styles/globals.css'
