@@ -1,11 +1,5 @@
-import {
-  Link,
-  useFetcher,
-  useLoaderData,
-  type ClientActionFunctionArgs,
-  type ClientLoaderFunctionArgs,
-} from 'react-router';
 import { useEffect, useState } from 'react'
+import { Link, useFetcher } from 'react-router'
 import { $path } from 'remix-routes'
 import { match } from 'ts-pattern'
 import { z } from 'zod'
@@ -24,6 +18,7 @@ import { useDebounce } from '~/hooks/useDebounce'
 import { cn } from '~/libs/utils'
 import { requireApiKey, saveConfig } from '~/services/config.client'
 import { ModelIdSchema, Models } from '~/services/models'
+import type { Route } from './+types/route'
 import {
   DistinationPane,
   FooterMenu,
@@ -36,13 +31,13 @@ import {
 } from './components'
 import { translateByGemini } from './functions'
 
-export const clientLoader = async ({ request }: ClientLoaderFunctionArgs) => {
+export const clientLoader = async ({ request }: Route.ClientLoaderArgs) => {
   const { source } = zx.parseQuery(request, { source: z.string().optional() })
   const config = await requireApiKey()
   return { source, config }
 }
 
-export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
+export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const config = await requireApiKey()
   const { model, source } = await zx.parseForm(request, {
     model: ModelIdSchema,
@@ -67,8 +62,9 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   return { response, duration: finishTime - startTime }
 }
 
-export default function IndexPage() {
-  const { source, config } = useLoaderData<typeof clientLoader>()
+export default function IndexPage({
+  loaderData: { source, config },
+}: Route.ComponentProps) {
   const [model, setModel] = useState<string>(config.model)
   const fetcher = useFetcher<typeof clientAction>()
   const [input, setInput] = useState('')
