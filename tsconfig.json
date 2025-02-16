@@ -3,6 +3,7 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["@react-router/node", "vite/client"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -21,7 +22,8 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["app/*"]
-    }
+    },
+    "rootDirs": [".", "./.react-router/types"]
   },
-  "include": ["app"]
+  "include": ["app/**/*.ts", "app/**/*.tsx", ".react-router/types/**/*"]
 }

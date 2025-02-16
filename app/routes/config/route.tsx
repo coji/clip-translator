@@ -6,16 +6,7 @@ import {
   useInputControl,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-  Form,
-  Link,
-  redirect,
-  useActionData,
-  useBlocker,
-  useLoaderData,
-  type ClientActionFunctionArgs,
-  type ClientLoaderFunctionArgs,
-} from 'react-router';
+import { Form, Link, redirect, useBlocker } from 'react-router'
 import { $path } from 'remix-routes'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -32,6 +23,7 @@ import {
 } from '~/components/ui'
 import { loadConfig, saveConfig } from '~/services/config.client'
 import { ModelIdSchema, Models } from '~/services/models'
+import type { Route } from './+types/route'
 import {
   BlockerAlert,
   ConfigContent,
@@ -48,12 +40,12 @@ const schema = z.object({
   model: ModelIdSchema,
 })
 
-export const clientLoader = async (_: ClientLoaderFunctionArgs) => {
+export const clientLoader = async (_: Route.ClientLoaderArgs) => {
   const config = await loadConfig()
   return { config }
 }
 
-export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
+export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const submission = parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
     return submission.reply()
@@ -66,9 +58,10 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   return redirect($path('/'))
 }
 
-export default function ConfigPage() {
-  const { config } = useLoaderData<typeof clientLoader>()
-  const lastResult = useActionData<typeof clientAction>()
+export default function ConfigPage({
+  loaderData: { config },
+  actionData: lastResult,
+}: Route.ComponentProps) {
   const [form, fields] = useForm({
     lastResult,
     defaultValue: { ...config },
