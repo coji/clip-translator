@@ -1,7 +1,6 @@
-import { redirect } from 'react-router';
-import {  path } from '@tauri-apps/api'
+import * as fs from '@tauri-apps/plugin-fs'
+import { redirect } from 'react-router'
 import { z } from 'zod'
-import * as fs from "@tauri-apps/plugin-fs"
 
 export const defaultConfig = {
   anthropic_api_key: '',
@@ -17,20 +16,21 @@ const ConfigSchema = z.object({
 })
 export type Config = z.infer<typeof ConfigSchema>
 
-const getConfigPath = async () => {
-  const appConfigDir = await path.appConfigDir()
-  await fs.createDir(appConfigDir, { recursive: true })
-  return await path.resolve(appConfigDir, 'config.json')
-}
-
 export const loadConfig = async (): Promise<Config> => {
   try {
-    const configPath = await getConfigPath()
-    const configStr = await fs.readTextFile(configPath)
+    const configStr = await fs.readTextFile('config.json', {
+      baseDir: fs.BaseDirectory.AppConfig,
+    })
     return ConfigSchema.parse(JSON.parse(configStr))
   } catch {
     return defaultConfig
   }
+}
+
+export const saveConfig = async (config: Config) => {
+  await fs.writeTextFile('config.json', JSON.stringify(config, null, 2), {
+    baseDir: fs.BaseDirectory.AppConfig,
+  })
 }
 
 export const requireApiKey = async () => {
@@ -39,9 +39,4 @@ export const requireApiKey = async () => {
     return config as Required<Config>
   }
   throw redirect('/config')
-}
-
-export const saveConfig = async (config: Config) => {
-  const configPath = await getConfigPath()
-  await fs.writeTextFile(configPath, JSON.stringify(config, null, 2))
 }

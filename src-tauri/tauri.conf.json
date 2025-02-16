@@ -23,7 +23,7 @@
   "plugins": {},
   "app": {
     "security": {
-      "csp": null
+      "capabilities": ["migrated"]
     },
     "windows": [
       {
