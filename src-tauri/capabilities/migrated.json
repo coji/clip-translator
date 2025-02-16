@@ -7,27 +7,20 @@
   ],
   "permissions": [
     "core:default",
-    "fs:allow-read-file",
-    "fs:allow-write-file",
-    "fs:allow-read-dir",
-    "fs:allow-mkdir",
     {
       "identifier": "fs:scope",
-      "allow": [
-        "$APP",
-        "$APP/**/*"
-      ]
+      "allow": [{ "path": "$APPCONFIG" }, { "path": "$APPCONFIG/config.json" }]
+    },
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": ["$APPCONFIG"]
+    },
+    {
+      "identifier": "fs:allow-write-text-file",
+      "allow": ["$APPCONFIG"]
     },
     "core:window:allow-set-focus",
     "shell:allow-open",
-    {
-      "identifier": "http:default",
-      "allow": [
-        {
-          "url": "https://api.anthropic.com/v1/messages"
-        }
-      ]
-    },
     "notification:default",
     "global-shortcut:allow-is-registered",
     "global-shortcut:allow-register",
