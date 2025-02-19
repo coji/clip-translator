@@ -1,11 +1,10 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { remixRoutes } from 'remix-routes/vite'
 import { defineConfig } from 'vite'
 import tsConfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [reactRouter(), remixRoutes(), tsConfigPaths()],
+  plugins: [reactRouter(), tsConfigPaths()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

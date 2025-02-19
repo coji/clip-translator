@@ -6,8 +6,7 @@ import {
   useInputControl,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { Form, Link, redirect, useBlocker } from 'react-router'
-import { $path } from 'remix-routes'
+import { Form, href, Link, redirect, useBlocker } from 'react-router'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import {
@@ -55,7 +54,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   await saveConfig(submission.value)
   toast.success('Configurations saved successfully')
 
-  return redirect($path('/'))
+  return redirect(href('/'))
 }
 
 export default function ConfigPage({
@@ -149,7 +148,7 @@ export default function ConfigPage({
 
       <ConfigFooter>
         <Button type="button" variant="ghost" asChild>
-          <Link to={$path('/')}>Cancel</Link>
+          <Link to={href('/')}>Cancel</Link>
         </Button>
         <Button form={form.id} type="submit" disabled={!form.dirty}>
           Save

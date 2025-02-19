@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useFetcher } from 'react-router'
-import { $path } from 'remix-routes'
+import { href, Link, useFetcher } from 'react-router'
 import { match } from 'ts-pattern'
 import { z } from 'zod'
 import { zx } from 'zodix'
@@ -132,7 +131,7 @@ export default function IndexPage({
         <FooterMenu>
           <FooterMenuItem>
             <Button variant="link" size="xs" asChild>
-              <Link to={$path('/config')}>Config</Link>
+              <Link to={href('/config')}>Config</Link>
             </Button>
           </FooterMenuItem>
 

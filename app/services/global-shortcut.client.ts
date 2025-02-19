@@ -7,8 +7,7 @@ import {
   type ShortcutEvent,
 } from '@tauri-apps/plugin-global-shortcut'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import { $path } from 'remix-routes'
+import { href, useNavigate } from 'react-router'
 import { sendNotify } from './notification.client'
 
 const HOTKEY = 'CommandOrControl+Shift+C'
@@ -39,7 +38,7 @@ export const useGlobalShortcut = async () => {
       const clipboardText = await clipboard.readText()
       if (clipboardText) {
         await webviewWindow.getCurrentWebviewWindow().setFocus()
-        navigate($path('/', { source: clipboardText }))
+        navigate(href('/', { source: clipboardText }))
       }
     })
 
